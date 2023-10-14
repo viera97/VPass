@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block content %}
+
+<br>
+<br>
+<br>
+<br>
+
+<div class="container text-center">
+<div class="row justify-content-center" >
+<div class="col-md-7 shadow px-5 py-4">
+
+<div class="display-4 mb-4">
+    Login:
+</div>
+
+<form action="" method="post">
+    {% csrf_token %}
+
+    <label for="username" class="form-label">Username</label>
+    {% if error_dic.username %}
+        <input class="form-control is-invalid" type="text" name="username", id="username" value="{{refill.username}}" placeholder="UserName" required>
+        <p style="color: red">{{error_dic.username}}</p>
+    {% else %}
+        <input class="form-control" type="text" name="username", id="username" value="{{refill.username}}" placeholder="UserName" required>
+    {% endif %}
+
+    <label for="password" class="form-label">Password</label>
+    {% if error_dic.password %}
+        <input class="form-control is-invalid" type="password" name="password" id="password" placeholder="Password" required>
+        <p style="color: red">{{error_dic.password}}</p>
+    {% else %}
+        <input class="form-control" type="password" name="password" id="password" placeholder="Password" required>
+    {% endif %}
+
+    <input type="hidden" name="login" id="login" value="login">
+    Don't have an Account? <a href="singup" class="link-primary">Sing up</a>
+    <br>
+    <br>
+    <button class="btn btn-primary" type="submit">Login</button>
+
+</form>
+
+</div>
+</div>
+</div>
+
+
+{% endblock content %}

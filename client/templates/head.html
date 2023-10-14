@@ -1,0 +1,106 @@
+{% load static %}
+{% load bootstrap_icons %}
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="{{theme}}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/5.3.2_dist_css_bootstrap.min.css'%}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mystyles.css'%}">
+
+    <title>{{title}}</title>
+</head>
+
+<body>
+
+{% if title == 'Home' or title == 'Configuration' %}
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+  <div class="container-fluid">
+
+    <a class="navbar-brand" href="/">Vpass</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynav" aria-controls="mynav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mynav">
+
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          {% if title == 'Configuration' %}
+            <a class="nav-link active" href="configuration">
+          {% else %}
+            <a class="nav-link" href="configuration">
+          {% endif %}
+            <span>{% custom_icon 'gear' size='1.1em' %}</span>
+            {% if language == "English" %}
+              Configuration
+            {% else %}
+              Configuración
+            {% endif %}
+          </a>
+        </li>
+        <li class="nav-item">
+            {% if theme == 'dark' %}
+            <a class="nav-link" href="?theme=light">
+                <span>{% custom_icon 'sun' size='1.2em' %}</span>
+            {% else %}
+            <a class="nav-link" href="?theme=dark">
+                <span>{% custom_icon 'moon' size='1.2em' %}</span>
+            {% endif %}
+              {% if language == "English" %}
+                Theme
+              {% else %}
+                Tema
+              {% endif %}
+            </a>
+        </li>
+
+        <li class="nav-item dropdown">
+
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span>{% custom_icon 'globe2' size='1.1em' %}</span>
+            {% if language == "English" %}
+              Language
+            {% else %}
+              Idioma
+            {% endif %}
+          </a>
+
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="?language=English">English</a></li>
+            <li><a class="dropdown-item" href="?language=Spanish">Español</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <div class="row">
+        <div class="col-10">
+          {% if title == "Home" %}
+          <form class="d-flex" role="search" action="" method="post">
+            {% csrf_token %}
+            {% if language == "English" %}
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-primary" type="submit">Search</button>
+            {% else %}
+              <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Search">
+              <button class="btn btn-outline-primary" type="submit">Buscar</button>
+            {% endif %}
+          </form>
+          {% endif %}
+        </div>
+        <div class="col-2 pt-1">
+          <a href="singout">
+            <span>{% custom_icon 'box-arrow-right' color="red" size='2em' %}</span>
+          </a>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</nav>
+{% endif %}

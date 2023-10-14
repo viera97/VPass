@@ -1,0 +1,467 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+{% block content %}
+
+<br>
+<br>
+<br>
+
+
+{% if language == "English" %}
+
+<div class="container">
+<div class="row justify-content-center" >
+<div class="col-md-7 shadow px-5 py-4">
+
+<div class="display-4 mb-4 text-center">
+    Questions:
+</div>
+
+{% if not already %}
+
+<form action="" method="POST">
+    {% csrf_token %}
+    {% if questionnumber == 4 %}
+        <select class="form-select" name="question" id="question" disabled>
+    {% else %}
+    {% if questionnumber == 5 %}
+        <select class="form-select" name="question" id="question" disabled>
+    {% else %}
+        <select class="form-select" name="question" id="question">
+    {% endif %}
+    {% endif %}
+        {% if "Q0" in disabledquestions %}
+            <option disabled value="Q0">
+                Place you want to visit
+            </option>
+        {% else %}
+            <option value="Q0">
+                Place you want to visit
+            </option>
+        {% endif %}
+
+        {% if "Q1" in disabledquestions %}
+            <option disabled value="Q1">
+                Name of your first pet
+            </option>
+        {% else %}
+            <option value="Q1">
+                Name of your first pet
+            </option>
+        {% endif %}
+
+        {% if "Q2" in disabledquestions %}
+            <option disabled value="Q2">
+                City were you born
+            </option>
+        {% else %}
+            <option value="Q2">
+                City were you born
+            </option>
+        {% endif %}
+        
+        {% if "Q3" in disabledquestions %}
+            <option disabled value="Q3">
+                Favorite Movie
+            </option>
+        {% else %}
+            <option value="Q3">
+                Favorite Movie
+            </option>
+        {% endif %}
+        
+        {% if "Q4" in disabledquestions %}
+            <option disabled value="Q4">
+                Sport you practice or like the most
+            </option>
+        {% else %}
+            <option value="Q4">
+                Sport you practice or like the most
+            </option>
+        {% endif %}            
+        
+        {% if "Q5" in disabledquestions %}
+            <option disabled value="Q5">
+                Name of your best childhood friend
+            </option>
+        {% else %}
+            <option value="Q5">
+                Name of your best childhood friend
+            </option>
+        {% endif %}
+        
+        {% if "Q6" in disabledquestions %}
+            <option disabled value="Q6">
+                Name of the first book you read
+            </option>
+        {% else %}
+            <option value="Q6">
+                Name of the first book you read
+            </option>
+        {% endif %}
+        
+        {% if "Q7" in disabledquestions %}
+            <option disabled value="Q7">
+                Food you prefer
+            </option>
+        {% else %}
+            <option value="Q7">
+                Food you prefer
+            </option>
+        {% endif %}
+        
+        {% if "Q8" in disabledquestions %}
+            <option disabled value="Q8">
+                Your mother's maiden name
+            </option>
+        {% else %}
+            <option value="Q8">
+                Your mother's maiden name
+            </option>
+        {% endif %}
+        
+        {% if "Q9" in disabledquestions %}
+            <option disabled value="Q9">
+                Musical instrument you know how to play or would like to learn
+            </option>
+        {% else %}
+            <option value="Q9">
+                Musical instrument you know how to play or would like to learn
+            </option>
+        {% endif %}
+    </select>
+
+    <br />
+    {% if questionnumber == 4 %}
+        <input class="form-control" type="text" id="anwser" name="anwser" placeholder="Anwser" disabled/>
+    {% else %}
+    {% if questionnumber == 5 %}
+        <input class="form-control" type="text" id="anwser" name="anwser" placeholder="Anwser" disabled/>
+    {% else %}
+        <input class="form-control" type="text" id="anwser" name="anwser" placeholder="Anwser" autofocus required/>
+    {% endif %}
+    {% endif %}
+    
+    {% if error_dic.anwser %}
+        <p style="color:red">{{error_dic.anwser}}</p>
+    {% else %}
+        <br />
+    {% endif %}            
+    
+    <input type="hidden" value="{{questionnumber}}" id="questionnumber" name="questionnumber" />
+    
+    <input
+        type="hidden"
+        value="{{total_anwser}}"
+        id="total_anwser"
+        name="total_anwser"
+    />
+
+    <input
+        type="hidden"
+        value="{{total_question}}"
+        id="total_question"
+        name="total_question"
+    />
+    
+    <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: {{porcent}}%"></div>
+    </div>
+    <br>
+    <div class="row justify-content-between">
+        <div class="col-3">
+            {% if questionnumber == 5 %}
+                {% if success %}
+                    <p style="color:green">Success Saving</p>
+                {% else %}
+                    <p style="color:red">Error Saving</p>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="col-3">
+            {% if questionnumber == 1 %}
+                <button class="btn btn-primary" type="sumbit">Next</button>
+            {% endif %}
+            {% if questionnumber == 2 %}
+                <button class="btn btn-primary" type="sumbit">Next</button>
+            {% endif %}
+            {% if questionnumber == 3 %}
+                <button class="btn btn-primary" type="sumbit">Next</button>
+            {% endif %}
+
+            {% if questionnumber == 4 %}
+                <button class="btn btn-primary" type="sumbit">Save</button>
+            {% endif %}
+
+            {% if questionnumber == 5 %}
+                <a class="btn btn-primary" href="configuration">Finish</a>
+            {% endif %}
+        </div>
+    </div>
+</form>
+
+{% else %}
+
+<select class="form-select" name="question" id="question" disabled>
+    <option value="Q0">
+        Place you want to visit
+    </option>
+</select>
+
+<br />
+<input class="form-control" type="text" id="anwser" name="anwser" placeholder="Respuesta" disabled/>
+<br />
+    
+<div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar" style="width: 100%"></div>
+</div>
+
+<br>
+<div class="row">
+    <div class="col-md-6 justify-content-center">
+        <p style="color:green">Questions Already Set</p>
+    </div>
+    <div class="col-md-4 justify-content-center">
+        <a class="btn btn-primary" href="configuration">Go Back</a>
+    </div>
+</div>
+
+{% endif %}
+
+
+
+
+
+
+
+{% else %}
+
+
+
+<div class="container">
+<div class="row justify-content-center" >
+<div class="col-md-7 shadow px-5 py-4">
+
+<div class="display-4 mb-4 text-center">
+    Preguntas:
+</div>
+
+{% if not already %}
+<form action="" method="POST">
+    {% csrf_token %}
+    {% if questionnumber == 4 %}
+        <select class="form-select" name="question" id="question" disabled>
+    {% else %}
+    {% if questionnumber == 5 %}
+        <select class="form-select" name="question" id="question" disabled>
+    {% else %}
+        <select class="form-select" name="question" id="question">
+    {% endif %}
+    {% endif %}
+        {% if "Q0" in disabledquestions %}
+            <option disabled value="Q0">
+                Lugar que quieres visitar
+            </option>
+        {% else %}
+            <option value="Q0">
+                Lugar que quieres visitar
+            </option>
+        {% endif %}
+
+        {% if "Q1" in disabledquestions %}
+            <option disabled value="Q1">
+                Nombre de tu primera mascota
+            </option>
+        {% else %}
+            <option value="Q1">
+                Nombre de tu primera mascota
+            </option>
+        {% endif %}
+
+        {% if "Q2" in disabledquestions %}
+            <option disabled value="Q2">
+                Ciudad donde naciste
+            </option>
+        {% else %}
+            <option value="Q2">
+                Ciudad donde naciste
+            </option>
+        {% endif %}
+        
+        {% if "Q3" in disabledquestions %}
+            <option disabled value="Q3">
+                Pelicula Favorita
+            </option>
+        {% else %}
+            <option value="Q3">
+                Pelicula Favorita
+            </option>
+        {% endif %}
+        
+        {% if "Q4" in disabledquestions %}
+            <option disabled value="Q4">
+                Deporte que practicas o te gusta más
+            </option>
+        {% else %}
+            <option value="Q4">
+                Deporte que practicas o te gusta más
+            </option>
+        {% endif %}            
+        
+        {% if "Q5" in disabledquestions %}
+            <option disabled value="Q5">
+                Nombre de tu mejor amigo/a de la infancia
+            </option>
+        {% else %}
+            <option value="Q5">
+                Nombre de tu mejor amigo/a de la infancia
+            </option>
+        {% endif %}
+        
+        {% if "Q6" in disabledquestions %}
+            <option disabled value="Q6">
+                Nombre del primer libro que leíste
+            </option>
+        {% else %}
+            <option value="Q6">
+                Nombre del primer libro que leíste
+            </option>
+        {% endif %}
+        
+        {% if "Q7" in disabledquestions %}
+            <option disabled value="Q7">
+                Comida que prefieres
+            </option>
+        {% else %}
+            <option value="Q7">
+                Comida que prefieres
+            </option>
+        {% endif %}
+        
+        {% if "Q8" in disabledquestions %}
+            <option disabled value="Q8">
+                Apellido de soltera de tu madre
+            </option>
+        {% else %}
+            <option value="Q8">
+                Apellido de soltera de tu madre
+            </option>
+        {% endif %}
+        
+        {% if "Q9" in disabledquestions %}
+            <option disabled value="Q9">
+                Instrumento musical que sabes tocar o te gustaría aprender
+            </option>
+        {% else %}
+            <option value="Q9">
+                Instrumento musical que sabes tocar o te gustaría aprender
+            </option>
+        {% endif %}
+    </select>
+
+    <br />
+    {% if questionnumber == 4 %}
+        <input class="form-control" type="text" id="anwser" name="anwser" placeholder="Respuesta" disabled/>
+    {% else %}
+    {% if questionnumber == 5 %}
+        <input class="form-control" type="text" id="anwser" name="anwser" placeholder="Respuesta" disabled/>
+    {% else %}
+        <input class="form-control" type="text" id="anwser" name="anwser" placeholder="Respuesta" autofocus required/>
+    {% endif %}
+    {% endif %}
+    
+    {% if error_dic.anwser %}
+        <p style="color:red">{{error_dic.anwser}}</p>
+    {% else %}
+        <br />
+    {% endif %}            
+    
+    <input type="hidden" value="{{questionnumber}}" id="questionnumber" name="questionnumber" />
+    
+    <input
+        type="hidden"
+        value="{{total_anwser}}"
+        id="total_anwser"
+        name="total_anwser"
+    />
+
+    <input
+        type="hidden"
+        value="{{total_question}}"
+        id="total_question"
+        name="total_question"
+    />
+    
+    <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: {{porcent}}%"></div>
+    </div>
+    <br>
+    <div class="row justify-content-between">
+        <div class="col-3">
+            {% if questionnumber == 5 %}
+                {% if success %}
+                    <p style="color:green">Guardado Exitosamente.</p>
+                {% else %}
+                    <p style="color:red">Error Guardando.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="col-3">
+            {% if questionnumber == 1 %}
+                <button class="btn btn-primary" type="sumbit">Siguiente</button>
+            {% endif %}
+            {% if questionnumber == 2 %}
+                <button class="btn btn-primary" type="sumbit">Siguiente</button>
+            {% endif %}
+            {% if questionnumber == 3 %}
+                <button class="btn btn-primary" type="sumbit">Siguiente</button>
+            {% endif %}
+
+            {% if questionnumber == 4 %}
+                <button class="btn btn-primary" type="sumbit">Guardar</button>
+            {% endif %}
+
+            {% if questionnumber == 5 %}
+                <a class="btn btn-primary" href="configuration">Terminar</a>
+            {% endif %}
+        </div>
+    </div>
+</form>
+
+{% else %}
+
+<select class="form-select" name="question" id="question" disabled>
+    <option value="Q0">
+        Lugar que quieres visitar
+    </option>
+</select>
+
+<br />
+<input class="form-control" type="text" id="anwser" name="anwser" placeholder="Respuesta" disabled/>
+<br />
+    
+<div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar" style="width: 100%"></div>
+</div>
+
+<br>
+<div class="row">
+    <div class="col-md-6 justify-content-center">
+        <p style="color:green">Ya las preguntas fueron establecidas.</p>
+    </div>
+    <div class="col-md-4 justify-content-center">
+        <a class="btn btn-primary" href="configuration">Ir atrás</a>
+    </div>
+</div>
+
+
+{% endif %}
+{% endif %}
+</div>
+</div>
+</div>
+
+{% endblock content %}

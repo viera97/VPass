@@ -1,0 +1,3 @@
+.venv
+secure_key
+db.sqlite3

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+{% block content %}
+
+<br>
+<br>
+<br>
+
+<div class="container">
+<div class="row justify-content-center" >
+<div class="col-md-7 shadow px-5 py-4">
+
+<div class="display-4 mb-4 text-center">
+  {% if language == "English" %}
+    Configuration:
+  {% else %}
+    Configuración:
+  {% endif %}
+</div>
+
+<div class="d-grid gap-2">
+  
+  <a class="btn btn-secondary" type="button">Github</a>
+  <small class="text-body-secondary">
+    {% if language == "English" %}
+      You can configure a github account for syncing the database, f
+      or more information you can visit this link <a class="link-primary" href="">Github Account Infor</a>.
+    {% else %}
+      Puedes configurar una cuenta de github para sincronizar la base de datos, para más información puede visitar
+      este enlace <a class="link-primary" href="">Información de cuenta de GitHub</a>.
+    {% endif %}
+  </small>
+  <a class="btn btn-secondary" type="button" href="encryptdata">
+    {% if language == "English" %}
+      Encrypt Database Entries
+    {% else %}
+      Encriptar entradas de la base de datos
+    {% endif %}
+  </a>
+  <small class="text-body-secondary">
+    {% if language == "English" %}
+      You can encrypt database with a generated hash and stored locally.
+    {% else %}
+      Puedes encriptar las entradas de la base de dato a partir de un hash generado y guardado localmente.
+    {% endif %}
+  </small>
+  <a class="btn btn-secondary" type="button" href="securityquestions">
+    {% if language == "English" %}
+      Security Questions
+    {% else %}
+      Preguntas de Seguridad
+    {% endif %}
+  </a>
+  <small class="text-body-secondary">
+    {% if language == "English" %}
+      You can configure a security questions, this questions will help you recover your account in case you lose it.
+    {% else %}
+      Puedes configurar preguntas de seguridad, estas preguntas te ayudarán a recuperar tu cuenta en caso 
+      de que la pierdas.
+    {% endif %}
+
+  </small>
+</div>
+
+
+</div>
+</div>
+</div>
+
+{% endblock content %}

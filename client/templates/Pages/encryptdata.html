@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+{% block content %}
+
+<br>
+
+{% if stored_key %}
+<br>
+<br>
+{% endif %}
+
+<div class="container">
+<div class="row justify-content-center" >
+<div class="col-md-7 shadow px-5 py-4 justify-content-center">
+
+<div class="display-4 mb-4 text-center">
+  {% if language == "English" %}
+    Encrypt Data:
+  {% else %}
+    Encriptar Datos:
+  {% endif %}
+</div>
+
+<small class="text-body-secondary text-center">
+    {% if language == "English" %}
+        The crypting of the elements of the database consists in encrypting all strings like anwsers to
+        security questions, usernames and passwords. This is done by generated key stored in a file named secure_key.
+        You should keep this secure_key safe, otherwise you won't be able access your data.
+    {% else %}
+        El encriptado de los elementos de la base de datos
+        consiste en encriptar los strings como las respuestas de las preguntas de seguridad, nombres
+        de usuario y contraseñas. Todo esto a partir de una llave generada y guardada en el archivo secure_key.
+        Debe guardar esta llave de lo contrario no podrá volver a acceder a sus datos.
+    {% endif %}
+</small>
+
+{% if not stored_key %}
+
+<br>
+<br>
+<div class="row justify-content-center">
+    <div class="col-md-2">
+        <a class="btn btn-primary" href="?generate=True">
+            {% if language == "English" %}
+                Generate
+            {% else %}
+                Generar
+            {% endif %}
+        </a>
+    </div>
+
+    <div class="col-md-8">
+        <div class="input-group">
+            <input class="form-control" type="text" value="{{key}}" readonly>
+            <button class="input-group-text" 
+                    onclick="copy('{{key}}','#generate')"
+                    id="generate">
+                <span class="pb-1" id="addon-wrapping">{% custom_icon 'clipboard' size='1.2em' %}</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<br>
+<div class="row justify-content-center">
+    <h4 class="text-center">
+        <small class="text-body-secondary text-center">
+            {% if language == "English" %}
+                In case you already have a key 
+            {% else %}
+                En caso de que ya tenga la llave.
+            {% endif %}
+        </small>
+    </h4>
+</div>
+<br>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="input-group mb-3 custom-file-button">
+        {% if key %}
+            <input type="file" class="form-control" id="inputfile" name="inputfile" disabled>
+        {% else %}
+            <input type="file" class="form-control" id="inputfile" name="inputfile">
+        {% endif %}
+    </div>
+    {% if error_dic.file %}
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            
+        </div>
+        <div class="col-md-5">
+            <p style="color: red">{{error_dic.file}}</p>
+        </div>
+        <div class="col-md-3">
+
+        </div>
+    </div>
+    {% endif %}
+
+    {% if language == "English" %}
+        {% if key %}
+            <input class="form-control" type="text" placeholder="Paste secure_key" disabled>
+        {% else %}
+            <input class="form-control" type="text" placeholder="Paste secure_key" id="pastekey" name="pastekey">
+        {% endif %}
+    {% else %}
+        {% if key %}
+            <input class="form-control" type="text" placeholder="Pegar secure_key" disabled>
+        {% else %}
+            <input class="form-control" type="text" placeholder="Pegar secure_key" id="pastekey" name="pastekey">
+        {% endif %}
+    {% endif %}
+
+    <br>
+    {% if key %}
+        <input type="hidden" name="key" id="key" value="{{key}}">
+    {% endif %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <a class="btn btn-primary" href="configuration">
+                {% if language == "English" %}
+                    Go Back
+                {% else %}
+                    Ir Atrás
+                {% endif %}
+            </a>
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary" type="submit">
+                {% if language == "English" %}
+                    Save
+                {% else %}
+                    Guardar
+                {% endif %}
+            </button>
+        </div>
+    </div>
+</form>
+
+{% else %}
+
+<br>
+<br>
+<div class="row justify-content-center">
+    <h4 class="text-center">
+        <small class="text-body-secondary text-center">
+            {% if language == "English" %}
+                Key is stored 
+            {% else %}
+                La llave esta guardada
+            {% endif %}
+        </small>
+    </h4>
+</div>
+
+<small class="text-body-secondary text-center">
+    <p style="color: red">
+        {% if language == "English" %}
+            Warning: If you delete this key you won't be able to access your data from the database.
+        {% else %}
+            Advertencia: Si eliminas esta llave no podras acceder a los elementos de la base de datos.
+        {% endif %}
+    </p>
+</small>
+
+<div class="row justify-content-between">
+    <div class="col-md-5">
+        <a class="btn btn-primary" href="configuration">
+            {% if language == "English" %}
+                Go Back
+            {% else %}
+                Ir Atrás
+            {% endif %}
+        </a>
+    </div>
+    <div class="col-md-5">
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletemodal">
+            {% if language == "English" %}
+                Delete
+            {% else %}
+                Eliminar
+            {% endif %}
+        </button>
+    </div>
+</div>
+{% endif %}
+
+<!-- Modal -->
+<div class="modal fade" id="deletemodal" tabindex="-1" aria-labelledby="deletemodal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 text-danger" id="exampleModalLabel">
+                    {% if language == "English" %}
+                        Delete Stored Key
+                    {% else %}
+                        Eliminar LLave Guardada
+                    {% endif %}
+                </h1>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            {% if language == "English" %}
+                I undertand I'm deleting the secure_key, and there is no way of getting it back
+            {% else %}
+                Entiendo que estoy eliminando la secure_key, y no hay forma de recuperarla
+            {% endif %}
+        </div>    
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            {% if language == "English" %}
+                Close
+            {% else %}
+                Cerrar
+            {% endif %}
+        </button>
+        <a type="button" class="btn btn-danger" href="?delete_key=True">
+            {% if language == "English" %}
+                Delete
+            {% else %}
+                Eliminar
+            {% endif %}
+        </a>
+    </div>
+</div>
+
+<script>
+    const myModal = document.getElementById('myModal')
+    const myInput = document.getElementById('myInput')
+
+    myModal.addEventListener('shown.bs.modal', () => {
+        myInput.focus()})
+    const myModal = document.getElementById('myModal')
+    const myInput = document.getElementById('myInput')
+    
+    myModal.addEventListener('shown.bs.modal', () => {
+        myInput.focus()
+    })
+</script>
+
+<script>
+    function copy(text, target) {
+        setTimeout(function() {
+        $('#copied_tip').remove();
+        }, 800);
+        $(target).append("<div class='tip' id='copied_tip'>Copied!</div>");
+        var input = document.createElement('input');
+        input.setAttribute('value', text);
+        document.body.appendChild(input);
+        input.select();
+        var result = document.execCommand('copy');
+        document.body.removeChild(input)
+        return result;
+}
+</script>
+
+</div>
+</div>
+</div>
+
+{% endblock content %}
