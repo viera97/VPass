@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils import timezone
 # Create your models here.
 
 class Entries(models.Model):
@@ -10,7 +10,7 @@ class Entries(models.Model):
     password = models.TextField(max_length=100, blank=False, null=False)
     From_User = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
     encrypted = models.BooleanField(null=False, blank=False, default=False)
-    created = models.DateTimeField(null=False, blank=False)
+    created = models.DateTimeField(null=False, blank=False, default=timezone.now, editable=False)
     updated = models.DateTimeField(null=True, blank=True)
 class Questions(models.Model):
     secquestions0 = models.CharField(

@@ -3,11 +3,13 @@ from django.http import HttpResponse
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.db.models.functions import Lower
 
 from cryptography.fernet import Fernet
 
 import re
 import os
+import datetime
 
 from . import passwd
 from .models import Questions, Entries, Incorrectban
@@ -15,7 +17,7 @@ from . import encryptions
 
 #Number of users
 global user_number
-user_number = 1
+user_number = 2
 
 #Geting if the devices is a mobile
 def mobile(request):
@@ -101,6 +103,15 @@ def handle_uploaded_file(f):
 		for chunk in f.chunks(): 
 			destination.write(chunk) 
 
+#checkempty inputs
+def checkempty(textinput):
+    cont = -1
+    for i in textinput.split(" "):
+        if i == "":
+            cont += 1
+    if len(textinput) == cont:
+        return True
+    
 #HTML VIEWS
 #-----------------------------------
 #Views for handling logins
@@ -529,7 +540,7 @@ def home(request):
     if not request.user.is_authenticated:
         return redirect("singin")
 
-    entries = Entries.objects.all()
+    entries = Entries.objects.all().order_by(Lower('name'))
 
     if len(entries) == 0:
         empty = True
@@ -556,6 +567,7 @@ def home(request):
                     search = request.GET.get('search')
                     if 'search' != '':
                         entries = Entries.objects.filter(name__icontains = search) | Entries.objects.filter(username__icontains = search) | Entries.objects.filter(url__icontains = search)
+                        entries = entries.order_by(Lower('name'))
                         if len(entries) == 0:
                             emptysearch = True
                         else:
@@ -581,13 +593,13 @@ def home(request):
             search = request.POST['search']
             if not empty:
                 entries = Entries.objects.filter(name__icontains = search) | Entries.objects.filter(username__icontains = search) | Entries.objects.filter(url__icontains = search)
+                entries = entries.order_by(Lower('name'))
                 selectedentry = entries.first()
                 entryidbool = True
                 if len(entries) == 0:
                     emptysearch = True
                 else:
                     emptysearch = False
-
 
     if entryidbool:
         context = {
@@ -673,6 +685,68 @@ def mobilehomeentry(request):
         }
     
     response = render(request, 'Pages/mobilehomeentry.html', context)
+    response.set_cookie(key='theme', value=theme)
+    response.set_cookie(key='language', value=language)
+    return response
+
+def add_entry(request):
+    theme, language, is_mobile = init(request)
+
+    if not request.user.is_authenticated:
+        return redirect("singin")
+
+    error_dic = {}
+    selectedentry = {}
+
+    if request.method == 'POST':
+        name = request.POST['name']
+        username = request.POST['username']
+        password = request.POST['password']
+        url = request.POST['url']
+
+        if checkempty(name):
+            if language == "English":
+                error_dic['name'] = "The name can't be empty"
+            else:
+                error_dic['name'] = "El nombre no puede ser vacío"
+
+        if checkempty(username):
+            if language == "English":
+                error_dic['username'] = "The username can't be empty"
+            else:
+                error_dic['username'] = "El nombre de usuario no puede ser vacío"
+        
+        if checkempty(password):
+            if language == "English":
+                error_dic['password'] = "The password can't be empty"
+            else:
+                error_dic['password'] = "La contraseña no puede ser vacía"
+
+        if not 'name' in error_dic:
+            selectedentry['name'] = name
+        if not 'username' in error_dic:
+            selectedentry['username'] = username
+        if not 'password' in error_dic:
+            selectedentry['password'] = password
+        if not 'url' in error_dic:
+            selectedentry['url'] = url
+        
+        if len(error_dic) == 0:
+            entry = Entries(name=name, username=username, password=password, url=url, From_User=request.user)
+            entry.save()
+            return redirect("/")
+        
+    context = {
+            'title':'Add Entry',
+            'theme':theme,
+            'language':language,
+            'is_mobile':is_mobile,
+            'datetime':datetime.datetime.now(),
+            'error_dic':error_dic,
+            'selectedentry':selectedentry
+        }
+    
+    response = render(request, 'Pages/add_entry.html', context)
     response.set_cookie(key='theme', value=theme)
     response.set_cookie(key='language', value=language)
     return response

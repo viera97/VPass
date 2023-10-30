@@ -1,3 +1,7 @@
 .venv
 secure_key
+secure_key_aux
+secure_key.bak
 db.sqlite3
+db.sqlite3.bak
+

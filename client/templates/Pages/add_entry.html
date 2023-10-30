@@ -3,218 +3,157 @@
 {% load static %}
 {% load bootstrap_icons %}
 
+
 {% block content %}
 
 <br>
-
-{% if entryidbool %}
+<br>
 
 <div class="container">
     <div class="row justify-content-center" >
         <div class="col-md-7 shadow px-5 py-4">
-            <div class="d-flex justify-content-between">
-                <div class="display-6">
-                    {% if language == "English" %}
-                        Item Information
-                    {% else %}
-                        Información de Elemento
-                    {% endif %}
-                </div>
-                {% if state %}
-                    <a type="button" class="btn" href="mobilehomeentry?entryid={{selectedentry.id}}&search={{search}}">
+            <div class="d-flex justify-content-center">
+            <div class="display-6">
+                {% if language == "English" %}
+                    Add Entry
                 {% else %}
-                    <a type="button" class="btn" href="/?entryid={{selectedentry.id}}&search={{search}}">
+                    Agregar Entrada
                 {% endif %}
-                    <span id="addon-wrapping">{% custom_icon 'arrow-left-circle' color="blue" size='3em' %}</span>
-                    </a>
+            </div>
             </div>
             <small class="text-secondary">
-                {% if language == "English" %}
-                    Created:
-                {% else %}
-                    Creado:
-                {% endif %}
-                {{selectedentry.created}}
-                
-                {% if not selectedentry.updated == None %}
-                    -- 
-                    {% if language == "English" %}
-                        Updated:
-                    {% else %}
-                        Actualizado:
-                    {% endif %}
-                    {{selectedentry.updated}}
-                    {% endif %}
+                {{datetime}}
             </small>
-
-            <form action="" method="post">
-            {% csrf_token %}
             <br>
-            
-            <div class="text-secondary">
-                {% if language == "English" %}
-                    Name
-                {% else %}
-                    Nombre
-                {% endif %}
-            </div>        
-            
-            {% if language == "English" %}
-                <input type="text" class="form-control" placeholder="Name" value="{{selectedentry.name}}" id="name" name="name" required>
-            {% else %}
-                <input type="text" class="form-control" placeholder="Nombre" value="{{selectedentry.name}}" id="name" name="name" required>
-            {% endif %}
-            {% if error_dic.name %}
-            <p class="text-danger">
-                {{error_dic.name}}
-            </p>
-            {% else %}
-                <br>
-            {% endif %}
-            <div class="text-secondary">
-                {% if language == "English" %}
-                    Username
-                {% else %}
-                    Nombre de Usuario
-                {% endif %}
-            </div>
-            
-            {% if language == "English" %}
-                <input type="text" class="form-control" placeholder="Username" value="{{selectedentry.username}}" id="username" name="username" required>
-            {% else %}
-                <input type="text" class="form-control" placeholder="Username" value="{{selectedentry.username}}" id="username" name="username" required>
-            {% endif %}
-
-            {% if error_dic.username %}
-            <p class="text-danger">
-                {{error_dic.username}}
-            </p>
-            {% else %}
-                <br>
-            {% endif %}
-
-            <div class="row">
-                <div class="col-4">
-                    <small class="text-secondary">
-                        {% if language == "English" %}
-                            Password
-                        {% else %}
-                            Contraseña
-                        {% endif %}
-                    </small>
-                </div>
-                <div class="col-3 d-flex justify-content-center">
-                    <span id="passwordcheckedspan">
-                    </span>
-                </div>
-
-                <div class="col-5 d-flex justify-content-end">
-                    <a class="btn link" data-bs-toggle="modal" data-bs-target="#advancemodal">
-                        {% if language == "English" %}
-                            Advance
-                        {% else %}
-                            Avanzado
-                        {% endif %}
-                    </a>
-                </div>
-            </div>
-            <div class="input-group mb-3">
-                {% if language == "English" %}
-                    <input type="password" class="form-control" placeholder="Password" value="{{selectedentry.password}}" id="password" name="password" required>
-                {% else %}
-                    <input type="password" class="form-control" placeholder="Contraseña" value="{{selectedentry.password}}" id="password" name="password" required>
-                {% endif %}
-
-                <span class="input-group-text eyepassword" onclick="generatepassword()" id="spancheckpassword">
-                        {% custom_icon 'arrow-repeat' size='1.5em' %}
-                </span>
-
-                <span class="input-group-text eyepassword" onclick="checkpassword()" id="spancheckpassword">
-                        {% custom_icon 'check-circle' size='1.5em' %}
-                </span>
-
-                <span class="input-group-text eyepassword" onclick="showhidepassword('spaneye')" id="spaneye">
-                        {% custom_icon 'eye' size='1.5em' %}
-                </span>
-
-                <span class="input-group-text eyepassword" onclick="showhidepassword('spaneyeslash')" id="spaneyeslash" hidden>
-                        {% custom_icon 'eye-slash' size='1.5em' %}
-                </span>
-
-            </div>
-            {% if error_dic.password %}
-                <p class="text-danger">
-                    {{error_dic.password}}
-                </p>
-            {% endif %}
-
-            <div class="text-secondary">
-                {% if language == "English" %}
-                    Website
-                {% else %}
-                    Sitio Web
-                {% endif %}
-            </div>
-            <input type="url" class="form-control" name="url" id="url" placeholder="URL" value="{{selectedentry.url}}" required>
-            
-            {% if error_dic.url %}
-                <p class="text-danger">
-                    {{error_dic.url}}
-                </p>
-            {% endif %}
-
-            <input type="hidden" name="state" id="state" value="{{state}}">
-            <input type="hidden" name="entry" id="entry" value="{{selectedentry.id}}">
-            <input type="hidden" name="search" id="search" value="{{search}}">
-
-            <div class='d-flex justify-content-center mt-3'>
-                <button type="submit" class="btn btn-primary">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="text-secondary">
                     {% if language == "English" %}
-                        Save
+                        Name
                     {% else %}
-                        Guardar
+                        Nombre
                     {% endif %}
-                </button>
-            </div>
+                </div>
+                {% if language == "English" %}
+                    <input type="text" class="form-control" placeholder="Name" value="{{selectedentry.name}}" id="name" name="name" required>
+                {% else %}
+                    <input type="text" class="form-control" placeholder="Nombre" value="{{selectedentry.name}}" id="name" name="name" required>
+                {% endif %}
+
+                {% if error_dic.name %}
+                    <p class="text-danger">
+                        {{error_dic.name}}
+                    </p>
+                {% else %}
+
+                <br>
+                {% endif %}
+
+                <div class="text-secondary">
+                    {% if language == "English" %}
+                        Username
+                    {% else %}
+                        Nombre de Usuario
+                    {% endif %}
+                </div>
+
+                {% if language == "English" %}
+                    <input type="text" class="form-control" placeholder="Username" value="{{selectedentry.username}}" id="username" name="username" required>
+                {% else %}
+                    <input type="text" class="form-control" placeholder="Username" value="{{selectedentry.username}}" id="username" name="username" required>
+                {% endif %}
+                
+                {% if error_dic.username %}
+                    <p class="text-danger">
+                        {{error_dic.username}}
+                    </p>
+                {% else %}
+                    <br>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-6">
+                        <small class="text-secondary">
+                            {% if language == "English" %}
+                                Password
+                            {% else %}
+                                Contraseña
+                            {% endif %}
+                        </small>
+                    </div>
+                    <div class="col-6 d-flex justify-content-end">
+                        <span id="passwordcheckedspan">
+                        </span>
+
+                        <div class="col-5 d-flex justify-content-end">
+                            <a class="btn link" data-bs-toggle="modal" data-bs-target="#advancemodal">
+                                {% if language == "English" %}
+                                    Advance
+                                {% else %}
+                                    Avanzado
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        {% if language == "English" %}
+                            <input type="password" class="form-control" placeholder="Password" value="{{selectedentry.password}}" id="password" name="password" required>
+                        {% else %}
+                            <input type="password" class="form-control" placeholder="Contraseña" value="{{selectedentry.password}}" id="password" name="password" required>
+                        {% endif %}
+
+                        <span class="input-group-text eyepassword" onclick="generatepassword()" id="spancheckpassword">
+                            {% custom_icon 'arrow-repeat' size='1.5em' %}
+                        </span>
+                        
+                        <span class="input-group-text eyepassword" onclick="checkpassword()" id="spancheckpassword">
+                            {% custom_icon 'check-circle' size='1.5em' %}
+                        </span>
+                        
+                        <span class="input-group-text eyepassword" onclick="showhidepassword('spaneye')" id="spaneye">
+                            {% custom_icon 'eye' size='1.5em' %}
+                        </span>
+                        
+                        <span class="input-group-text eyepassword" onclick="showhidepassword('spaneyeslash')" id="spaneyeslash" hidden>
+                            {% custom_icon 'eye-slash' size='1.5em' %}
+                        </span>
+                    </div>
+                </div>
+                    {% if error_dic.password %}
+                        <p class="text-danger">
+                    {{error_dic.password}}
+                        </p>
+                    {% endif %}
+
+                    <div class="text-secondary">
+                        {% if language == "English" %}
+                            Website
+                        {% else %}
+                            Sitio Web
+                        {% endif %}
+                    </div>
+                    <input type="url" class="form-control" name="url" id="url" placeholder="URL" value="{{selectedentry.url}}" required>
+
+                    {% if error_dic.url %}
+                        <p class="text-danger">
+                            {{error_dic.url}}
+                        </p>
+                    {% endif %}
+                    
+                    <div class='d-flex justify-content-center mt-3'>
+                        <button type="submit" class="btn btn-primary">
+                            {% if language == "English" %}
+                                Save
+                            {% else %}
+                                Guardar
+                            {% endif %}
+                        </button>
+                    </div>
             </form>
         </div>
     </div>
 </div>
 
-{% else %}
-<div class="container-lg shadow px-5 py-4">
-<br>
-<br>
-
-<div class="d-flex justify-content-center">
-    <a type="button" class="btn" href="/?search={{search}}">
-        <span id="addon-wrapping">{% custom_icon 'arrow-left-circle' color="blue" size='3em' %}</span>
-    </a>
-</div>
-
-<br>
-<div class="d-flex align-items-center justify-content-center">
-    {% if language == "English" %}
-        <h2 class="text-danger">
-            <span>{% custom_icon 'database-exclamation' size='4em' %}</span>
-            ID not found
-        </h2>
-    {% else %}
-      <h2 class="text-danger">
-        <span>{% custom_icon 'database-exclamation' size='4em' %}</span>
-        El ID no se encuentra
-      </h2>
-    {% endif %}
-</div>
-<br>
-<div class="d-flex align-items-center justify-content-center">
-    <h1 class="text-secondary">
-        <span>{% custom_icon 'body-text' size='1.1em' %}</span>
-          Vpass
-    </h1>
-</div>
-</div>
-{% endif %}
 
 
 <div class="modal fade" id="advancemodal" tabindex="-1" aria-labelledby="advancemodal" aria-hidden="true">
@@ -281,7 +220,6 @@
         </button>
     </div>
 </div>
-
 
 {% if language == "English" %}
 
