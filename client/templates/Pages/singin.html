@@ -22,27 +22,73 @@
 <form action="" method="post">
     {% csrf_token %}
 
-    <label for="username" class="form-label">Username</label>
-    {% if error_dic.username %}
-        <input class="form-control is-invalid" type="text" name="username", id="username" value="{{refill.username}}" placeholder="UserName" required>
-        <p style="color: red">{{error_dic.username}}</p>
+    {% if language == "English" %}
+        <label for="username" class="form-label">Username</label>
     {% else %}
-        <input class="form-control" type="text" name="username", id="username" value="{{refill.username}}" placeholder="UserName" required>
+        <label for="username" class="form-label">Nombre de Usuario</label>
     {% endif %}
 
-    <label for="password" class="form-label">Password</label>
+    {% if error_dic.username %}
+
+    {% if language == "English" %}
+        <input class="form-control is-invalid" type="text" name="username", id="username" value="{{refill.username}}" placeholder="UserName" required>
+    {% else %}
+        <input class="form-control is-invalid" type="text" name="username", id="username" value="{{refill.username}}" placeholder="Nombre de Usuario" required>
+    {% endif %}
+
+        <p style="color: red">{{error_dic.username}}</p>
+    {% else %}
+        {% if language == "English" %}
+            <input class="form-control" type="text" name="username", id="username" value="{{refill.username}}" placeholder="UserName" required>
+        {% else %}
+            <input class="form-control" type="text" name="username", id="username" value="{{refill.username}}" placeholder="Nombre de Usuario" required>
+        {% endif %}
+    {% endif %}
+
+    {% if language == "English" %}
+        <label for="password" class="form-label">Password</label>
+    {% else %}
+        <label for="password" class="form-label">Contraseña</label>
+    {% endif %}
+
     {% if error_dic.password %}
+    {% if language == "English" %}
         <input class="form-control is-invalid" type="password" name="password" id="password" placeholder="Password" required>
+    {% else %}
+        <input class="form-control is-invalid" type="password" name="password" id="password" placeholder="Contraseña" required>
+    {% endif %}
+
         <p style="color: red">{{error_dic.password}}</p>
     {% else %}
-        <input class="form-control" type="password" name="password" id="password" placeholder="Password" required>
+        {% if language == "English" %}
+            <input class="form-control" type="password" name="password" id="password" placeholder="Password" required>
+        {% else %}
+            <input class="form-control" type="password" name="password" id="password" placeholder="Contraseña" required>
+        {% endif %}
     {% endif %}
 
     <input type="hidden" name="login" id="login" value="login">
-    Don't have an Account? <a href="singup" class="link-primary">Sing up</a>
+    {% if language == "English" %}
+        Don't remember the password? <a href="restoreaccount" class="link-primary">Click Here</a>
+    {% else %}
+        ¿No recuerdas la contraseña? <a href="restoreaccount" class="link-primary">Click Aquí</a>
+    {% endif %}
+
+    {% if delete %}
+    <br>
+        {% if language == "English" %}
+            Can't Recover Account? <a href="delete_data" class="link-primary">Clean all Data</a>
+        {% else %}
+            ¿No puedes recuperar tu cuenta? <a href="delete_data" class="link-primary">Limpia todos los datos</a>
+        {% endif %}
+    {% endif %}
     <br>
     <br>
-    <button class="btn btn-primary" type="submit">Login</button>
+    {% if language == "English" %}
+        <button class="btn btn-primary" type="submit">Login</button>
+    {% else %}
+        <button class="btn btn-primary" type="submit">Iniciar Sesión</button>
+    {% endif %}
 
 </form>
 

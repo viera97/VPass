@@ -2,7 +2,7 @@
 {% load bootstrap_icons %}
 
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="{{theme}}">
+<html lang="es" data-bs-theme="{{theme}}" id="webPage">
 
 <head>
     <meta charset="UTF-8">
@@ -15,12 +15,15 @@
 
 <body>
 
-{% if title == 'Home' or title == 'Configuration' %}
+{% if title == 'Home' or title == 'Configuration' or title == 'Edit' or title == 'Home mobile' %}
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
   <div class="container-fluid">
 
-    <a class="navbar-brand" href="/">Vpass</a>
+    <a class="navbar-brand" href="/">
+      <span>{% custom_icon 'body-text' size='1.1em' %}</span>
+      Vpass
+    </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynav" aria-controls="mynav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -43,12 +46,30 @@
             {% endif %}
           </a>
         </li>
+        
         <li class="nav-item">
             {% if theme == 'dark' %}
-            <a class="nav-link" href="?theme=light">
+            {% if title == "Home" %}
+              <a class="nav-link" href="?theme=light&entryid={{selectedentry.id}}">
+            {% elif title == 'Edit' %}
+              <a class="nav-link" href="?state={{state}}&entry={{selectedentry.id}}&theme=light&search={{search}}">
+            {% elif title == 'Home mobile' %}
+              <a class="nav-link" href="?entryid={{selectedentry.id}}&theme=light&search={{search}}">
+            {% else %}
+              <a class="nav-link" href="?theme=light">
+            {% endif %}
                 <span>{% custom_icon 'sun' size='1.2em' %}</span>
             {% else %}
-            <a class="nav-link" href="?theme=dark">
+            
+            {% if title == "Home" %}
+              <a class="nav-link" href="?theme=dark&entryid={{selectedentry.id}}">
+            {% elif title == 'Edit' %}
+              <a class="nav-link" href="?state={{state}}&entry={{selectedentry.id}}&theme=dark&search={{search}}">
+            {% elif title == 'Home mobile' %}
+              <a class="nav-link" href="?entryid={{selectedentry.id}}&theme=dark&search={{search}}">
+            {% else %}
+                <a class="nav-link" href="?theme=dark">
+            {% endif %}
                 <span>{% custom_icon 'moon' size='1.2em' %}</span>
             {% endif %}
               {% if language == "English" %}
@@ -71,27 +92,36 @@
           </a>
 
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="?language=English">English</a></li>
-            <li><a class="dropdown-item" href="?language=Spanish">Español</a></li>
+            {% if title == "Edit" %}
+              <li><a class="dropdown-item" href="editentry?state={{state}}&entry={{selectedentry.id}}&language=English&search={{search}}">English</a></li>
+              <li><a class="dropdown-item" href="editentry?state={{state}}&entry={{selectedentry.id}}&language=Spanish&search={{search}}">Español</a></li>
+            {% elif title == "Home mobile" %}
+              <li><a class="dropdown-item" href="mobilehomeentry?entryid={{selectedentry.id}}&language=English&search={{search}}">English</a></li>
+              <li><a class="dropdown-item" href="mobilehomeentry?entryid={{selectedentry.id}}&language=Spanish&search={{search}}">Español</a></li>
+            {% else %}
+              <li><a class="dropdown-item" href="?language=English">English</a></li>
+              <li><a class="dropdown-item" href="?language=Spanish">Español</a></li>
+            {% endif %}
           </ul>
         </li>
       </ul>
 
       <div class="row">
+        <!--
         <div class="col-10">
           {% if title == "Home" %}
           <form class="d-flex" role="search" action="" method="post">
             {% csrf_token %}
             {% if language == "English" %}
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" autofocus>
               <button class="btn btn-outline-primary" type="submit">Search</button>
             {% else %}
-              <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Search">
+              <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Search" autofocus>
               <button class="btn btn-outline-primary" type="submit">Buscar</button>
             {% endif %}
           </form>
           {% endif %}
-        </div>
+        </div>-->
         <div class="col-2 pt-1">
           <a href="singout">
             <span>{% custom_icon 'box-arrow-right' color="red" size='2em' %}</span>

@@ -42,8 +42,8 @@
 <br>
 <br>
 <div class="row justify-content-center">
-    <div class="col-md-2">
-        <a class="btn btn-primary" href="?generate=True">
+    <div class="col-md-2 d-flex justify-content-center">
+        <a class="btn btn-primary mb-4 mb-md-0 me-2" href="?generate=True">
             {% if language == "English" %}
                 Generate
             {% else %}
@@ -122,7 +122,7 @@
     {% endif %}
 
     <div class="row justify-content-center">
-        <div class="col-md-4">
+        <div class="col-6 d-flex justify-content-center">
             <a class="btn btn-primary" href="configuration">
                 {% if language == "English" %}
                     Go Back
@@ -132,7 +132,7 @@
             </a>
         </div>
 
-        <div class="col-md-2">
+        <div class="col-6 d-flex justify-content-center">
             <button class="btn btn-primary" type="submit">
                 {% if language == "English" %}
                     Save
@@ -171,7 +171,7 @@
 </small>
 
 <div class="row justify-content-between">
-    <div class="col-md-5">
+    <div class="col-6 d-flex justify-content-center">
         <a class="btn btn-primary" href="configuration">
             {% if language == "English" %}
                 Go Back
@@ -180,7 +180,7 @@
             {% endif %}
         </a>
     </div>
-    <div class="col-md-5">
+    <div class="col-6 d-flex justify-content-center">
 
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletemodal">
@@ -249,6 +249,7 @@
     })
 </script>
 
+{% if language == "English" %}
 <script>
     function copy(text, target) {
         setTimeout(function() {
@@ -264,7 +265,23 @@
         return result;
 }
 </script>
-
+{% else %}
+<script>
+    function copy(text, target) {
+        setTimeout(function() {
+        $('#copied_tip').remove();
+        }, 800);
+        $(target).append("<div class='tip' id='copied_tip'>Copiado!!</div>");
+        var input = document.createElement('input');
+        input.setAttribute('value', text);
+        document.body.appendChild(input);
+        input.select();
+        var result = document.execCommand('copy');
+        document.body.removeChild(input)
+        return result;
+}
+</script>
+{% endif %}
 </div>
 </div>
 </div>

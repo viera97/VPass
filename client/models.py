@@ -1,10 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django import forms
 
 # Create your models here.
 
-
+class Entries(models.Model):
+    name = models.TextField(max_length=20, blank=False, null=False)
+    url = models.URLField(max_length=200, blank=True)
+    username = models.TextField(max_length=40, blank=False, null=False)
+    password = models.TextField(max_length=100, blank=False, null=False)
+    From_User = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
+    encrypted = models.BooleanField(null=False, blank=False, default=False)
+    created = models.DateTimeField(null=False, blank=False)
+    updated = models.DateTimeField(null=True, blank=True)
 class Questions(models.Model):
     secquestions0 = models.CharField(
         max_length=2,
@@ -42,7 +49,7 @@ class Questions(models.Model):
         default="Q0",
     )
 
-    secanwser1 = models.TextField(null=False, verbose_name="Anwser 2")
+    secanwser1 = models.TextField(null=False)
 
     secquestions2 = models.CharField(
         max_length=2,
@@ -60,14 +67,11 @@ class Questions(models.Model):
         ],
         default="Q0",
     )
-    secanwser2 = models.TextField(null=False, verbose_name="Anwser 3")
+    secanwser2 = models.TextField(null=False)
 
     From_User = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
 
     encrypted = models.BooleanField(null=False, blank=False, default=False)
 
-    def __str__(self):
-        return f"{User}"
-
-class UploadFileForm(forms.Form):
-    file = forms.FileField()
+class Incorrectban(models.Model):
+    cont = models.IntegerField(null=False, blank=False, default=0)

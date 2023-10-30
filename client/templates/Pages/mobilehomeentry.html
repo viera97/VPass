@@ -1,0 +1,416 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+{% block content %}
+
+<br>
+<br>
+
+
+{% if not empty %}
+<div class="container-lg shadow px-5 py-4">
+<div class="d-flex justify-content-between">
+    <div class="display-6">
+        {% if language == "English" %}
+            Item Information
+        {% else %}
+            Información de Elemento
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-4">
+          <a type="button" class="btn" href="editentry?state=mobilehomeentry&entry={{selectedentry.id}}&search={{search}}">
+            <span id="addon-wrapping">{% custom_icon 'pencil-square' color="blue" size='2em' %}</span>
+          </a>
+        </div>
+        <div class="col-4">
+          <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#deletemodal">
+            <span id="addon-wrapping">{% custom_icon 'x-octagon' color="red" size='2em' %}</span>
+          </button>
+        </div>
+        <div class="col-4">
+            <a type="button" class="btn" href="/?entryid={{selectedentry.id}}&search={{search}}#entry{{selectedentry.id}}">
+                <span id="addon-wrapping">{% custom_icon 'arrow-left-circle' color="blue" size='2em' %}</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<small class="text-secondary">
+    {% if language == "English" %}
+        Created:
+    {% else %}
+        Creado:
+    {% endif %}
+    
+    {{selectedentry.created}}
+    {% if not selectedentry.updated == None %}
+        -- 
+        {% if language == "English" %}
+            Updated:
+        {% else %}
+            Actualizado:
+        {% endif %}
+        {{selectedentry.updated}}
+    {% endif %}
+    </small>
+
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <small class="text-secondary">
+                {% if language == "English" %}
+                    Name
+                {% else %}
+                    Nombre
+                {% endif %}
+            </small>
+            <br>
+            <div class="pt-2">
+                {{selectedentry.name}}
+            </div>
+        </li>
+        <li class="list-group-item">
+            <small class="text-secondary">
+                {% if language == "English" %}
+                    Username
+                {% else %}
+                    Nombre de Usuario
+                {% endif %}
+            </small>
+            <br>
+            <div class="d-flex justify-content-between">
+                <div class="pt-2">
+                    {{selectedentry.username}}
+                </div>
+                
+                <div class="mytooltip">
+                    <button class="btn buttons" onclick="copytootltipf('usernameinput{{selectedentry.id}}','myTooltipusername{{selectedentry.id}}')" onmouseout="outFunc('myTooltipusername{{selectedentry.id}}')">
+                        <span class="tooltiptext" id="myTooltipusername{{selectedentry.id}}">
+                        {% if language == "English" %}
+                            Copy
+                        {% else %}
+                            Copiar
+                        {% endif %}
+                        </span>
+                        <span id="addon-wrapping">{% custom_icon 'clipboard' size='1.2em' %}</span>
+                    </button>
+                    <input hidden type="text" name="usernameinput{{selectedentry.id}}" id="usernameinput{{selectedentry.id}}" value="{{selectedentry.username}}">
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <small class="text-secondary">
+                {% if language == "English" %}
+                    Password
+                {% else %}
+                    Contraseña
+                {% endif %}
+            </small>
+            <br>
+            <div class="d-flex justify-content-between">
+                <div class="pt-2" id="passworddiv">
+                    **********
+                </div>
+
+                <div class="btn-group" role="group">
+                    <div class="pt-2 text-success" id="checkpassworddiv">
+                    </div>
+                    <div class="mytooltip">
+                        {% if language == "English" %}
+                            <button href="check" class="btn buttons" onclick="check_password_status('{{selectedentry.password}}')" onmouseout="tooltipfunc('myTooltipCheck', 'Check')">
+                        {% else %}
+                            <button href="check" class="btn buttons" onclick="check_password_status('{{selectedentry.password}}')" onmouseout="tooltipfunc('myTooltipCheck', 'Verificar')">
+                        {% endif %}
+                                <span class="tooltiptext" id="myTooltipCheck">
+                                    {% if language == "English" %}
+                                        Check
+                                    {% else %}
+                                        Verificar
+                                    {% endif %}
+                                </span>
+                                <span id="addon-wrapping">{% custom_icon 'check-circle' size='1.3em' %}</span>
+                            </button>
+                    </div>
+
+                    <div class="mytooltip">
+                      {% if language == "English" %}
+                        <button class="btn buttons" onclick="showpassword()" onmouseout="tooltipfunc('myTooltiplook', 'Show')">
+                      {% else %}
+                        <button class="btn buttons" onclick="showpassword()" onmouseout="tooltipfunc('myTooltiplook', 'Ver')">
+                      {% endif %}
+                            <span class="tooltiptext" id="myTooltiplook">
+                                {% if language == "English" %}
+                                    Show
+                                {% else %}
+                                    Ver
+                                {% endif %}
+                            </span>
+                            <span id="addon-wrapping">{% custom_icon 'eye' size='1.3em' %}</span>
+                        </button>
+                    </div>
+
+                    <div class="mytooltip">
+                        <button class="btn buttons" onclick="copytootltipf('password{{selectedentry.id}}','myTooltippassword{{selectedentry.id}}')" onmouseout="outFunc('myTooltippassword{{selectedentry.id}}')">
+                            <span class="tooltiptext" id="myTooltippassword{{selectedentry.id}}">
+                            {% if language == "English" %}
+                                Copy
+                            {% else %}
+                                Copiar
+                            {% endif %}
+                            </span>
+                            <span id="addon-wrapping">{% custom_icon 'clipboard' size='1.2em' %}</span>
+                        </button>
+                        <input hidden type="text" name="password{{selectedentry.id}}" id="password{{selectedentry.id}}" value="{{selectedentry.password}}">
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <small class="text-secondary">
+                {% if language == "English" %}
+                    Website
+                {% else %}
+                    Sitio Web
+                {% endif %}
+            </small>
+            <br>
+            <div class="d-flex justify-content-between">
+                <div class="pt-2">
+                    <a class="btn buttons" href="{{selectedentry.url}}">
+                        {{selectedentry.url}}
+                        <span id="addon-wrapping">{% custom_icon 'link-45deg' size='1.3em' %}</span>
+                    </a>
+                </div>
+                <div>
+                <div class="mytooltip">
+                    <button class="btn buttons" onclick="copytootltipf('url{{selectedentry.id}}','myTooltipurl{{selectedentry.id}}')" onmouseout="outFunc('myTooltipurl{{selectedentry.id}}')">
+                        <span class="tooltiptext" id="myTooltipurl{{selectedentry.id}}">
+                        {% if language == "English" %}
+                            Copy
+                        {% else %}
+                            Copiar
+                        {% endif %}
+                        </span>
+                        <span id="addon-wrapping">{% custom_icon 'clipboard' size='1.2em' %}</span>
+                    </button>
+                    <input hidden type="text" name="url{{selectedentry.id}}" id="url{{selectedentry.id}}" value="{{selectedentry.url}}">
+                </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+{% else %}
+
+<div class="container-lg shadow px-5 py-4">
+<br>
+<br>
+
+<div class="d-flex justify-content-center">
+    <a type="button" class="btn" href="/?search={{search}}">
+        <span id="addon-wrapping">{% custom_icon 'arrow-left-circle' color="blue" size='3em' %}</span>
+    </a>
+</div>
+
+<br>
+<div class="d-flex align-items-center justify-content-center">
+    {% if language == "English" %}
+        <h2 class="text-danger">
+            <span>{% custom_icon 'database-exclamation' size='4em' %}</span>
+            ID not found
+        </h2>
+    {% else %}
+      <h2 class="text-danger">
+        <span>{% custom_icon 'database-exclamation' size='4em' %}</span>
+        El ID no se encuentra
+      </h2>
+    {% endif %}
+</div>
+<br>
+<div class="d-flex align-items-center justify-content-center">
+    <h1 class="text-secondary">
+        <span>{% custom_icon 'body-text' size='1.1em' %}</span>
+          Vpass
+    </h1>
+</div>
+</div>
+{% endif %}
+
+
+<!-- Modal -->
+<div class="modal fade" id="deletemodal" tabindex="-1" aria-labelledby="deletemodal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 text-danger" id="exampleModalLabel">
+                    {% if language == "English" %}
+                        Delete Entry
+                    {% else %}
+                        Eliminar Entrada
+                    {% endif %}
+                </h1>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            {% if language == "English" %}
+                I undertand I'm deleting the entry:
+                <span class="text-danger">{{selectedentry.name}}</span>
+                , and there is no way of getting it back
+            {% else %}
+                Entiendo que estoy eliminando la entrada: 
+                <span class="text-danger">{{selectedentry.name}}</span>
+                , y no hay forma de recuperarla
+            {% endif %}
+        </div>    
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            {% if language == "English" %}
+                Close
+            {% else %}
+                Cerrar
+            {% endif %}
+        </button>
+        <a type="button" class="btn btn-danger" href="?theme={{theme}}&delete={{selectedentry.id}}">
+            {% if language == "English" %}
+                Delete
+            {% else %}
+                Eliminar
+            {% endif %}
+        </a>
+    </div>
+</div>
+
+<!--Script-->
+{% if language == "English" %}
+<script>
+
+function check_password_status(password){
+  const url = "/check_password_status?pass="+password;
+
+  fetch(url)
+  
+    .then((response) => response.text())
+
+    .then((text) => {
+      var checkpassworddiv = document.getElementById("checkpassworddiv");
+      if (text == "insecure"){
+        checkpassworddiv.className += " text-danger";
+        checkpassworddiv.innerHTML = "Insecure";
+      }
+      else{
+        if (text == "comprmised"){
+          checkpassworddiv.className += " text-danger";
+          checkpassworddiv.innerHTML = "Comprmised";
+        }
+        else{
+          check_password_status.className += " text-success";
+          checkpassworddiv.innerHTML = "Secure";
+        }
+      }
+      
+    })
+    
+    .catch((error) => {
+
+      console.error(error);
+    });
+}
+
+function copytootltipf(idtext, idtooltip) {
+  var copyText = document.getElementById(idtext);
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  
+  navigator.clipboard.writeText(copyText.value);
+  
+  alert("Copied the text: ");
+  
+  var tooltip = document.getElementById(idtooltip);
+  tooltip.innerHTML = "Copied!!";
+}
+
+function outFunc(idtooltip) {
+  var tooltip = document.getElementById(idtooltip);
+  tooltip.innerHTML = "Copy";
+}
+</script>
+{% else %}
+<script>
+
+function check_password_status(password){
+  const url = "/check_password_status?pass="+password;
+
+  fetch(url)
+  
+    .then((response) => response.text())
+
+    .then((text) => {
+      var checkpassworddiv = document.getElementById("checkpassworddiv");
+      if (text == "insecure"){
+        checkpassworddiv.className += " text-danger";
+        checkpassworddiv.innerHTML = "Insegura";
+      }
+      else{
+        if (text == "comprmised"){
+          checkpassworddiv.className += " text-danger";
+          checkpassworddiv.innerHTML = "Comprometida";
+        }
+        else{
+          check_password_status.className += " text-success";
+          checkpassworddiv.innerHTML = "Segura";
+        }
+      }
+      
+    })
+    
+    .catch((error) => {
+
+      console.error(error);
+    });
+}
+
+function copytootltipf(idtext, idtooltip) {
+  var copyText = document.getElementById(idtext);
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+  
+  var tooltip = document.getElementById(idtooltip);
+  tooltip.innerHTML = "Copiado!!";
+}
+
+function outFunc(idtooltip) {
+  var tooltip = document.getElementById(idtooltip);
+  tooltip.innerHTML = "Copiar";
+}
+</script>
+{% endif %}
+
+<script>
+function tooltipfunc(idtooltip, text) {
+  var tooltip = document.getElementById(idtooltip);
+  tooltip.innerHTML = text;
+}
+
+
+var textDiv = document.getElementById("passworddiv");
+textDiv.innerHTML = "**********";
+
+function showpassword(){
+  var textDiv = document.getElementById("passworddiv");
+  var currentText = textDiv.innerHTML;
+
+  if (currentText == "**********") {
+    textDiv.innerHTML = "{{selectedentry.password}}";
+  } else {
+    textDiv.innerHTML = "**********";
+  }
+}
+</script>
+
+{% endblock content %}

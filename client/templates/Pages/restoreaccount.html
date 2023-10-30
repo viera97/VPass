@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block content %}
+
+<br>
+<br>
+<br>
+<br>
+
+<div class="container text-center">
+<div class="row justify-content-center" >
+<div class="col-md-7 shadow px-5 py-4">
+
+<div class="display-4 mb-4">
+{% if language == "English" %}
+    Restore Account:
+{% else %}
+    Restaurar Cuenta:
+{% endif %}
+</div>
+
+{% if empty %}
+
+<br>
+
+<h5>
+    <small class="text-danger">You can't recover your account because there is no security questions set.</small>
+</h5>
+
+<br>
+<a href="/" class="btn btn-primary">
+    Go Back
+</a>
+{% else %}
+{% if not questions_check %}
+<h5>
+    <small>
+        {% if language == "English" %}
+            In order for restore your account anwser this questions
+        {% else %}
+            Para poder restaurar su cuenta responda estas preguntas
+        {% endif %}
+    </small>
+</h5>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <br>
+    <h5 class="text-primary">
+    <strong>
+        {{question}}
+    </strong>
+    </h5>
+    {% if language == "English" %}
+        <small><a href="?language=Spanish">Spanish</a></small>
+    {% else %}
+        <small><a href="?language=English">English</a></small>
+    {% endif %}
+    <br>
+    {% if error_dic.anwser %}
+        {% if language == "English" %}
+            {% if incorrect == 2 or incorrectban.cont == 2 %}
+                <input class="form-control" type="text" id="anwser" name="anwser" placeholder="Anwser" disabled/>
+            {% else %}
+                <input class="form-control is-invalid" type="text" id="anwser" name="anwser" placeholder="Anwser" autofocus/>
+            {% endif %}
+        {% else %}
+            {% if incorrect == 2 or incorrectban.cont == 2 %}
+                <input class="form-control" type="text" id="anwser" name="anwser" placeholder="Respuesta" disabled/>
+            {% else %}
+                <input class="form-control is-invalid" type="text" id="anwser" name="anwser" placeholder="Respuesta" autofocus/>
+            {% endif %}
+        {% endif %}
+    {% else %}
+        {% if language == "English" %}
+            {% if incorrect == 2 or incorrectban.cont == 2 %}
+                <input class="form-control" type="text" id="anwser" name="anwser" placeholder="Anwser" disabled/>
+            {% else %}
+                <input class="form-control" type="text" id="anwser" name="anwser" placeholder="Anwser" autofocus/>
+            {% endif %}
+        {% else %}
+            {% if incorrect == 2 or incorrectban.cont == 2 %}
+                <input class="form-control" type="text" id="anwser" name="anwser" placeholder="Respuesta" disabled/>
+            {% else %}
+                <input class="form-control" type="text" id="anwser" name="anwser" placeholder="Respuesta" autofocus/>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+
+    {% if error_dic.anwser %}
+        <p class="text-danger">{{error_dic.anwser}}</p>
+    {% else %}
+
+    {% if incorrectban.cont == 2 %}
+        <p class="text-danger">
+            {% if language == "English" %}
+                Too many tries.
+            {% else %}
+                Demasiados Intentos.
+            {% endif %}
+        </p>
+    {% else %}
+        <br>
+    {% endif %}
+    {% endif %}
+
+    <input type="hidden" name="language" id="language" value="{{language}}">
+    <input type="hidden" name="incorrect" id="incorrect" value="{{incorrect}}">
+    <input type="hidden" name="p" id="p" value="{{p}}">
+    {% if incorrect == 2 or incorrectban.cont == 2 %}
+        <a href="/" class="btn btn-danger">
+            {% if language == "English" %}
+                Back
+            {% else %}
+                Atras
+            {% endif %}
+        </a>
+    {% else %}
+        <button class="btn btn-primary" type="sumbit">
+            {% if language == "English" %}
+                Next
+            {% else %}
+                Siguiente
+            {% endif %}
+        </button>
+    {% endif %}
+</form>
+{% else %}
+
+<h5>
+    <small>
+        {% if language == "English" %}
+            Your user account is <strong>{{user}}</strong>, create a new password.
+        {% else %}
+            Tu cuenta de usuario es <strong>{{user}}</strong>, crea una contraseña nueva.
+        {% endif %}
+    </small>
+</h5>
+
+<form action="" method="post">
+    {% csrf_token %}
+
+    <label for="password1">
+        <strong>
+            {% if language == "English" %}
+                Type Passowrd.
+            {% else %}
+                Escribe Contraseña.
+            {% endif %}
+        </strong>
+    </label>
+    {% if restored %}
+        {% if language == "English" %}
+            <input class="form-control" type="password" id="password1" name="password1" placeholder="Password" autofocus disabled/>
+        {% else %}
+            <input class="form-control" type="password" id="password1" name="password1" placeholder="Contraseña" autofocus disabled/>
+        {% endif %}
+    {% else %}
+
+    {% if error_dic.password %}
+        {% if language == "English" %}
+            <input class="form-control is-invalid" type="password" id="password1" name="password1" placeholder="Password" autofocus/>
+        {% else %}
+            <input class="form-control is-invalid" type="password" id="password1" name="password1" placeholder="Contraseña" autofocus/>
+        {% endif %}
+    {% else %}
+        {% if language == "English" %}
+            <input class="form-control" type="password" id="password1" name="password1" placeholder="Password" autofocus/>
+        {% else %}
+            <input class="form-control" type="password" id="password1" name="password1" placeholder="Contraseña" autofocus/>
+        {% endif %}
+    {% endif %}
+    {% endif %}
+
+    <label for="password2">
+        <strong>
+            {% if language == "English" %}
+                Repeat password.
+            {% else %}
+                Repite la contraseña.
+            {% endif %}
+        </strong>
+    </label>
+
+    {% if restored %}
+
+        {% if language == "English" %}
+            <input class="form-control" type="password" id="password2" name="password2", placeholder="Passowrd" disabled>
+        {% else %}
+            <input class="form-control" type="password" id="password2" name="password2", placeholder="Contraseña" disabled>
+        {% endif %}
+
+    {% else %}
+
+    {% if error_dic.password %}
+        {% if language == "English" %}
+            <input class="form-control is-invalid" type="password" id="password2" name="password2", placeholder="Passowrd">
+        {% else %}
+            <input class="form-control is-invalid" type="password" id="password2" name="password2", placeholder="Contraseña">
+        {% endif %}
+    {% else %}
+        {% if language == "English" %}
+            <input class="form-control" type="password" id="password2" name="password2", placeholder="Passowrd">
+        {% else %}
+            <input class="form-control" type="password" id="password2" name="password2", placeholder="Contraseña">
+        {% endif %}
+    {% endif %}
+
+    {% endif %}
+
+    {% if error_dic.password %}
+        <p class="text-danger">{{error_dic.password}}</p>
+    {% else %}
+
+        {% if restored %}
+            <p class="text-success">
+                {% if language == "English" %}
+                    Password Restored
+                {% else %}
+                    Contraseña Restaurada.
+                {% endif %}
+            </p>
+        {% else %}
+            <br>
+        {% endif %}
+        
+    {% endif %}
+
+    <input type="hidden" name="questions_check" id="questions_check" value="{{questions_check}}">
+
+    {% if restored %}
+
+    <a href="/" class="btn btn-primary">
+        {% if language == "English" %}
+            Finish
+        {% else %}
+            Terminar
+        {% endif %}
+    </a>
+    
+    {% else %}
+    <button class="btn btn-primary" type="sumbit">
+        {% if language == "English" %}
+            Save
+        {% else %}
+            Guardar
+        {% endif %}
+    </button>
+    {% endif %}
+
+</form>
+
+{% endif %}
+{% endif %}
+
+
+</div>
+</div>
+</div>
+{% endblock content %}

@@ -1,0 +1,105 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Fixed Panels with Content Bar</title>
+    <!-- Bootstrap 4 CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <style>
+        /* Set the height of the left panel to 100% of the viewport */
+        #left-panel {
+            height: 100vh;
+        }
+        /* Set the width of the left panel to 25% of the viewport */
+        #left-panel .col-3 {
+            width: 25vw;
+        }
+        /* Set the width of the right panel to 75% of the viewport */
+        #right-panel .col-9 {
+            width: 75vw;
+        }
+        /* Set the background color of the left panel */
+        #left-panel .bg-dark {
+            background-color: #343a40 !important;
+        }
+        /* Set the background color of the right panel */
+        #right-panel .bg-light {
+            background-color: #f8f9fa !important;
+        }
+        /* Set the overflow property of the left panel to auto, so that a scrollbar appears when the content is longer than the panel */
+        #left-panel .overflow-auto {
+            overflow: auto;
+        }
+        /* Set the padding and margin of the content bar to zero, so that it fills the entire width of the left panel */
+        #content-bar {
+            padding: 0;
+            margin: 0;
+        }
+        /* Set the height of the content bar to 10% of the viewport */
+        #content-bar .col-12 {
+            height: 10vh;
+        }
+        /* Set the background color of the content bar */
+        #content-bar .bg-info {
+            background-color: #17a2b8 !important;
+        }
+        /* Center the text inside the content bar */
+        #content-bar .text-center {
+            line-height: 10vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left panel -->
+            <div id="left-panel" class="col-3 px-1 bg-dark position-fixed">
+                <!-- Content bar -->
+                <div id="content-bar" class="row">
+                    <div class="col-12 bg-info text-white text-center">
+                        <h4>Content Bar</h4>
+                    </div>
+                </div>
+                <!-- Content -->
+                <div class="row overflow-auto">
+                    <div class="col-12">
+                        <!-- Put your left panel content here -->
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis leo vitae lorem tincidunt tincidunt. Morbi quis nisl ut leo malesuada lacinia. Fusce vitae lorem sit amet lacus sagittis consequat. Donec quis semper eros. Sed quis nisl ut leo malesuada lacinia. Fusce vitae lorem sit amet lacus sagittis consequat.</p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis leo vitae lorem tincidunt tincidunt. Morbi quis nisl ut leo malesuada lacinia. Fusce vitae lorem sit amet lacus sagittis consequat. Donec quis semper eros. Sed quis nisl ut leo malesuada lacinia. Fusce vitae lorem sit amet lacus sagittis consequat.</p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis leo vitae lorem tincidunt tincidunt. Morbi quis nisl ut leo malesuada lacinia. Fusce vitae lorem sit amet lacus sagittis consequat. Donec quis semper eros. Sed quis nisl ut leo malesuada lacinia. Fusce vitae lorem sit amet lacus sagittis consequat.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Right panel -->
+            <div id="right-panel" class="col offset-3 px-1 bg-light position-fixed">
+                <!-- Content -->
+                <div class="row">
+                    <div class="col-9">
+                        <!-- Put your right panel content here -->
+                        <h1>Right Panel</h1>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis leo vitae lorem tincidunt tincidunt. Morbi quis nisl ut leo malesuada lacinia. Fusce vitae lorem sit amet lacus sagittis consequat. Donec quis semper eros. Sed quis nisl ut leo malesuada lacinia. Fusce vitae lorem sit amet lacus sagittis consequat.</p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis leo vitae lorem tincidunt tincidunt. Morbi quis nisl ut leo malesuada lacinia. Fusce vitae lorem sit amet lacus sagittis consequat. Donec quis semper eros. Sed quis nisl ut leo malesuada lacinia. Fusce vitae lorem sit amet lacus sagittis consequat.</p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis leo vitae lorem tincidunt tincidunt. Morbi quis nisl ut leo malesuada lacinia. Fusce vitae lorem sit amet lacus sagittis consequat. Donec quis semper eros. Sed quis nisl ut leo malesuada lacinia. Fusce vitae lorem sit amet lacus sagittis consequat.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("visibilitychange", function() {
+        const url = "/check_password_status?pass="+password;
+        if (document.hidden) {
+            console.log("Sliste");
+        }
+        });
+    </script>
+    
+    <!-- Bootstrap 4 CDN -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+</body>
+</html>

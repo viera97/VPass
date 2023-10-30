@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+{% block content %}
+
+
+<br>
+<br>
+<br>
+
+<div class="container">
+<div class="row justify-content-center" >
+<div class="col-md-7 shadow px-5 py-4 justify-content-center">
+
+<div class="display-4 mb-4 text-center">
+  {% if language == "English" %}
+    Delete Data:
+  {% else %}
+    Delete Data:
+  {% endif %}
+</div>
+
+<small class="text-body-secondary text-center">
+    {% if language == "English" %}
+        All data is stored in a sqlite database. The entries of logins, the user,
+        the github account and encryption key are stored.
+
+    {% else %}
+        Todos los datos son guardados en una base de datos sqlite. Las entradas de los logins,
+        el usuario, la cuenta de github y la llave de encriptado son guardadas.
+    {% endif %}
+</small>
+
+<br>
+<br>
+{% if not deleted %}
+<small class="text-body-secondary text-center">
+    <p style="color: red">
+        {% if language == "English" %}
+            Warning: If you clean all data you won't be able to access your data, and your User will be lost.
+        {% else %}
+            Advertencia: Si limpias todos los datos, no podras acceder a los elementos de la base de datos, y tu usuario se perderá.
+        {% endif %}
+    </p>
+</small>
+
+<div class="d-flex justify-content-center">
+    <h5>
+        {% if language == "English" %}
+            <small><a href="?language=Spanish">Spanish</a></small>
+        {% else %}
+            <small><a href="?language=English">English</a></small>
+        {% endif %}
+    </h5>
+</div>
+
+<br>
+<div class="row justify-content-between">
+    <div class="col-6 d-flex justify-content-center">
+        <a class="btn btn-primary" href="/">
+            {% if language == "English" %}
+                Go Back
+            {% else %}
+                Ir Atrás
+            {% endif %}
+        </a>
+    </div>
+    <div class="col-6 d-flex justify-content-center">
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletemodal">
+            {% if language == "English" %}
+                Delete
+            {% else %}
+                Eliminar
+            {% endif %}
+        </button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deletemodal" tabindex="-1" aria-labelledby="deletemodal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 text-danger" id="exampleModalLabel">
+                    {% if language == "English" %}
+                        Clean all data
+                    {% else %}
+                        Limpiar todos los datos
+                    {% endif %}
+                </h1>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            {% if language == "English" %}
+                I undertand I'm deleting all data, and there is no way of getting it back
+            {% else %}
+                Entiendo que estoy eliminando todos los datos, y no hay forma de recuperarlos
+            {% endif %}
+        </div>    
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            {% if language == "English" %}
+                Close
+            {% else %}
+                Cerrar
+            {% endif %}
+        </button>
+        <a type="button" class="btn btn-danger" href="?delete_data=True">
+            {% if language == "English" %}
+                Delete
+            {% else %}
+                Eliminar
+            {% endif %}
+        </a>
+    </div>
+</div>
+
+<script>
+    const myModal = document.getElementById('myModal')
+    const myInput = document.getElementById('myInput')
+
+    myModal.addEventListener('shown.bs.modal', () => {
+        myInput.focus()})
+    const myModal = document.getElementById('myModal')
+    const myInput = document.getElementById('myInput')
+    
+    myModal.addEventListener('shown.bs.modal', () => {
+        myInput.focus()
+    })
+</script>
+{% else %}
+
+<small class="text-body-secondary text-center">
+    <p style="color: green">
+        {% if language == "English" %}
+            All data was cleaned.
+        {% else %}
+            Todos los datos fueron borrados.
+        {% endif %}
+    </p>
+</small>
+
+<div class="d-flex justify-content-center">
+    <a type="button" class="btn btn-primary" href="/">
+        {% if language == "English" %}
+            Back
+        {% else %}
+            Atras
+        {% endif %}
+    </a>
+</div>
+
+{% endif %}
+</div>
+</div>
+</div>
+
+{% endblock content %}

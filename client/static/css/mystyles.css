@@ -35,4 +35,72 @@
     animation-fill-mode: both;
     bottom: -35px;left:2px}
 
+
+
+
 .text-line{font-size: 14px}
+
+.mytooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.mytooltip .tooltiptext {
+  visibility: hidden;
+  width: 80px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 120%;
+  margin-left: -75px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.mytooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.mytooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.list-group-styled {
+  max-height: 1px;
+  margin-bottom: 10px;
+  overflow-y: auto; /* Show vertical scrollbar */
+  -webkit-overflow-scrolling: touch;
+}
+
+.list-group-styled-notentry{
+  max-height: 390px;
+  margin-bottom: 10px;
+  overflow-y: auto; /* Show vertical scrollbar */
+  -webkit-overflow-scrolling: touch;
+}
+
+.buttons{
+  color: #025ce2;
+}
+
+.buttons:hover {
+  color: gray;
+}
+
+.eyepassword:hover {
+  cursor: pointer;
+}
