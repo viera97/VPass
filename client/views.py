@@ -13,7 +13,7 @@ import datetime
 
 from . import passwd
 from .models import Questions, Entries, Incorrectban
-from . import encryptions
+from . import encryptions, otpget
 
 #Number of users
 global user_number
@@ -111,7 +111,15 @@ def checkempty(textinput):
             cont += 1
     if len(textinput) == cont:
         return True
-    
+
+def otpsecretget(request):
+    if request.method == 'GET':
+        if request.GET.get('secret'):
+            secret = request.GET.get('secret').split(' ')[-1]
+            return HttpResponse(otpget.get(secret)[0:3]+" "+otpget.get(secret)[3:7])
+        else:
+            return HttpResponse('None')
+
 #HTML VIEWS
 #-----------------------------------
 #Views for handling logins

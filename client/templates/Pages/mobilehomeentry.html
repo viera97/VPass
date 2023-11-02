@@ -59,18 +59,55 @@
 
     <ul class="list-group list-group-flush">
         <li class="list-group-item">
+        <div class="d-flex justify-content-between">
+          <div>
             <small class="text-secondary">
-                {% if language == "English" %}
-                    Name
-                {% else %}
-                    Nombre
-                {% endif %}
+              {% if language == "English" %}
+                Name
+              {% else %}
+                Nombre
+              {% endif %}
             </small>
             <br>
             <div class="pt-2">
-                {{selectedentry.name}}
+              {{selectedentry.name}}
             </div>
+          </div>
+          <div>
+            <small class="text-secondary">
+                OTP
+            </small>
+            <br>
+            <div class="pt-2">
+              <div class="mytooltip">
+              <span class="otp{{selectedentry.id}}">
+                {% if selectedentry.otp == None %}
+                  <a href="">Agregar otp</a>
+                {% else %}
+                  {{selectedentry.otp}}
+                {% endif %}
+              </span>
+              {% if not selectedentry.otp == None %}
+                <button class="btn buttons" onclick="copytootltipf('otp{{selectedentry.id}}','myTooltotp{{selectedentry.id}}')" onmouseout="outFunc('myTooltotp{{selectedentry.id}}')">
+                <span class="tooltiptext" id="myTooltotp{{selectedentry.id}}">
+                  {% if language == "English" %}
+                    Copy
+                  {% else %}
+                    Copiar
+                  {% endif %}
+                </span>
+                <span id="addon-wrapping">{% custom_icon 'clipboard' size='1.2em' %}</span>
+              </button>
+              <input hidden type="text" name="otp{{selectedentry.id}}" id="otp{{selectedentry.id}}" value="{{selectedentry.otp}}">
+              {% endif %}
+              </div>
+            </div>
+
+          </div>
+
+        </div>
         </li>
+
         <li class="list-group-item">
             <small class="text-secondary">
                 {% if language == "English" %}

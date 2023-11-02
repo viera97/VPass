@@ -174,16 +174,54 @@
     </small>
     <ul class="list-group list-group-flush">
       <li class="list-group-item">
-        <small class="text-secondary">
-          {% if language == "English" %}
-            Name
-          {% else %}
-            Nombre
-          {% endif %}
-        </small>
-        <br>
-        <div class="pt-2">
-          {{selectedentry.name}}
+        <div class="d-flex justify-content-between">
+          <div>
+            <small class="text-secondary">
+              {% if language == "English" %}
+                Name
+              {% else %}
+                Nombre
+              {% endif %}
+            </small>
+            <br>
+            <div class="pt-2">
+              {{selectedentry.name}}
+            </div>
+          </div>
+          <div>
+            <small class="text-secondary">
+                OTP
+            </small>
+            <br>
+            <div class="pt-2">
+              <div class="mytooltip">
+              <span class="otp{{selectedentry.id}}">
+                {% if selectedentry.otp == None %}
+                  <a href="">Agregar otp</a>
+                {% else %}
+                  <span id="otpsecret">
+                    {{selectedentry.otp}}
+                  </span>
+                {% endif %}
+              </span>
+              {% if not selectedentry.otp == None %}
+              <button class="btn buttons" onclick="copytootltipf('otp{{selectedentry.id}}','myTooltotp{{selectedentry.id}}')" onmouseout="outFunc('myTooltotp{{selectedentry.id}}')">
+                <span class="tooltiptext" id="myTooltotp{{selectedentry.id}}">
+                  {% if language == "English" %}
+                    Copy
+                  {% else %}
+                    Copiar
+                  {% endif %}
+                </span>
+                <span id="addon-wrapping">{% custom_icon 'clipboard' size='1.2em' %}</span>
+              </button>
+              <input hidden type="text" name="otp{{selectedentry.id}}" id="otp{{selectedentry.id}}" value="{{selectedentry.otp}}">
+              {% endif %}
+              </div>
+            </div>
+
+          </div>
+
         </div>
       </li>
       
@@ -562,6 +600,31 @@ var rightColumnHeight = rightColumn.offsetHeight;
 var listGroup = document.getElementsByClassName("list-group")[0];
 // Set the max-height of the list-group to match the right column height
 listGroup.style.maxHeight = rightColumnHeight + "px";
+
+
+var otpsecret = document.getElementById('otpsecret');
+var secretkey = otpsecret.innerHTML;
+
+function otptimer(){
+  const url = "/otpsecretget?secret="+secretkey;
+    fetch(url)
+    .then((response) => response.text())
+    .then((text) => {  
+      otpsecret.innerHTML = text;
+      })
+}
+
+otptimer();
+
+const interval = setInterval(function() {
+  const url = "/otpsecretget?secret="+secretkey;
+  fetch(url)
+  .then((response) => response.text())
+  .then((text) => {
+    otpsecret.innerHTML = text;
+  })
+ }, 10000);
+
 </script>
 
 {% endblock content %}
