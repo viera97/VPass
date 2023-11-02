@@ -728,8 +728,8 @@ def add_entry(request):
             selectedentry['username'] = username
         if not 'password' in error_dic:
             selectedentry['password'] = password
-        if not 'url' in error_dic:
-            selectedentry['url'] = url
+            
+        selectedentry['url'] = url
         
         if len(error_dic) == 0:
             entry = Entries(name=name, username=username, password=password, url=url, From_User=request.user)
@@ -873,26 +873,12 @@ def editentry(request):
                     error_dic['password'] = "La contraseña no puede ser vacía"
         
         url = request.POST['url']
-        if url == "":
-            if language == "English":
-                error_dic['url'] = "The url can't be empty"
-            else:
-                error_dic['url'] = "La url no puede ser vacía"
-        else:
-            cont = -1
-            for i in url.split(" "):
-                if i == "":
-                    cont += 1
-            
-            if len(url) == cont:
-                if language == "English":
-                    error_dic['url'] = "The url can't be empty"
-                else:
-                    error_dic['url'] = "La url no puede ser vacía"
-        
+
         selectedentry_aux = {}
         selectedentry_aux['id']=selectedentry.id
 
+        selectedentry_aux['url'] = url
+        
         if not "name" in error_dic:
             selectedentry_aux['name'] = name
         else:
@@ -907,11 +893,6 @@ def editentry(request):
             selectedentry_aux['password'] = password
         else:
             selectedentry_aux['password'] = selectedentry.password
-        
-        if not 'url' in error_dic:
-            selectedentry_aux['url'] = url
-        else:
-            selectedentry_aux['url'] = selectedentry.url
 
         selectedentry = selectedentry_aux
 
@@ -929,7 +910,7 @@ def editentry(request):
                 return redirect(f"/mobilehomeentry?entryid={selectedentry_aux['id']}&search={search}")
             else:
                 return redirect(f"/?entryid={selectedentry_aux['id']}&search={search}")
-
+            
     context = {
             'title':'Edit',
             'theme':theme,
