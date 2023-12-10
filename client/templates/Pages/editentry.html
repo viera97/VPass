@@ -118,6 +118,7 @@
                     </a>
                 </div>
             </div>
+
             <div class="input-group mb-3">
                 {% if language == "English" %}
                     <input type="password" class="form-control" placeholder="Password" value="{{selectedentry.password}}" id="password" name="password" required>
@@ -147,6 +148,73 @@
                     {{error_dic.password}}
                 </p>
             {% endif %}
+            
+            <small class="text-secondary">
+                OTP
+            </small>
+            <br>
+            
+            <div class="row">
+            <div class="col-4">
+            <div class="mytooltip">
+              <span class="btn otp{{selectedentry.id}}">
+                {% if selectedentry.otp == None %}
+                    {% if language == "English" %}
+                        Add
+                    {% else %}
+                        Agregar
+                    {% endif %}
+                    <span class="btn mb-1" data-bs-toggle="modal" data-bs-target="#addotp">
+                        {% custom_icon 'plus-circle' size='1.5em' %}
+                    </span>
+                {% else %}
+                  <span id="otpsecret" onclick="copytootltipf('otp{{selectedentry.id}}','myTooltotp{{selectedentry.id}}')" onmouseout="outFunc('myTooltotp{{selectedentry.id}}')">
+                    {{selectedentry.otp}}
+                  </span>
+                  <span class="tooltiptext" id="myTooltotp{{selectedentry.id}}">
+                  {% if language == "English" %}
+                    Copy
+                  {% else %}
+                    Copiar
+                  {% endif %}
+                </span>
+                <input hidden type="text" name="otp{{selectedentry.id}}" id="otp{{selectedentry.id}}" value="{{selectedentry.otp}}">
+                
+                {% if selectedentry.otptype == "TOTP" %}
+                <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
+                  <div class="progress-bar progress-bar-striped progress-bar-animated" id="otpprogress" style="width: 0%"></div>
+                </div>
+                {% endif %}
+                {% endif %}
+              </span>
+              </div>
+              </div>
+              {% if selectedentry.otptype == "TOTP" %}
+                <div class="col-8">
+              {% else %}
+                 <div class="col-2">
+                    {% if not selectedentry.otp == None %}
+                    <input class="form-control" type="number" name="hotpat" id="hotpat" value="0" min="0">
+                    {% endif %}
+                 </div>
+                 <div class="col-6">
+              {% endif %}
+                {% if not selectedentry.otp == None %}
+                {% if selectedentry.otptype == "TOTP" %}
+                    <div class="btn-group pt-3" role="group" aria-label="Basic example">
+                {% else %}
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                {% endif %}
+                        <span class="btn" onclick="fun()" id="">
+                            {% custom_icon 'arrow-repeat' size='1.5em' %}
+                        </span>
+                        <span class="btn" id="" data-bs-toggle="modal" data-bs-target="#deleteotp">
+                            {% custom_icon 'trash2' color="red" size='1.4em' %}
+                        </span>
+                    </div>
+                {% endif %}
+              </div>
+              </div>
 
             <div class="text-secondary">
                 {% if language == "English" %}
@@ -160,7 +228,8 @@
             <input type="hidden" name="state" id="state" value="{{state}}">
             <input type="hidden" name="entry" id="entry" value="{{selectedentry.id}}">
             <input type="hidden" name="search" id="search" value="{{search}}">
-
+            <input type="hidden" name="form1" id="form1" value="form1">
+            
             <div class='d-flex justify-content-center mt-3'>
                 <button type="submit" class="btn btn-primary">
                     {% if language == "English" %}
@@ -223,59 +292,217 @@
                     {% endif %}
                 </h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if language == "English" %}
+                    Length:
+                {% else %}
+                    Tamaño:
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-10 mt-2">
+                        <input type="range" class="form-range" min="8" max="50" id="rangeinput">
+                    </div>
+                    <div class="col-2">
+                        <input class="form-control" type="number" name="length" id="length" min='8' max='50'>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-10 mt-1">
+                        <input type="text" class="form-control" name="passwordadvancedgen" id="passwordadvancedgen">
+                    </div>
+                    <div class="col-2">
+                        <button class="btn" onclick="generatepasswordadvabced()" id="genadvanced">
+                            <span>
+                                {% custom_icon 'arrow-repeat' size='1.5em' %}
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                <div id="advancedselectstatus">
+
+                </div>
+
+            </div>    
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    {% if language == "English" %}
+                        Close
+                    {% else %}
+                        Cerrar
+                    {% endif %}
+                </button>
+                <button type="button" class="btn btn-success" onclick="advancedselect()" id="select">
+                    {% if language == "English" %}
+                        Select
+                    {% else %}
+                        Seleccionar
+                    {% endif %}
+                </button>
+            </div>
         </div>
-        <div class="modal-body">
-            {% if language == "English" %}
-                Length:
-            {% else %}
-                Tamaño:
-            {% endif %}
-
-            <div class="row">
-                <div class="col-10 mt-2">
-                    <input type="range" class="form-range" min="8" max="50" id="rangeinput">
-                </div>
-                <div class="col-2">
-                    <input class="form-control" type="number" name="length" id="length" min='8' max='50'>
-                </div>
-            </div>
-            <br>
-            <div class="row">
-                <div class="col-10 mt-1">
-                    <input type="text" class="form-control" name="passwordadvancedgen" id="passwordadvancedgen">
-                </div>
-                <div class="col-2">
-                    <button class="btn" onclick="generatepasswordadvabced()" id="genadvanced">
-                        <span>
-                            {% custom_icon 'arrow-repeat' size='1.5em' %}
-                        </span>
-                    </button>
-                </div>
-            </div>
-            <div id="advancedselectstatus">
-
-            </div>
-
-        </div>    
-
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            {% if language == "English" %}
-                Close
-            {% else %}
-                Cerrar
-            {% endif %}
-        </button>
-        <button type="button" class="btn btn-success" onclick="advancedselect()" id="select">
-            {% if language == "English" %}
-                Select
-            {% else %}
-                Seleccionar
-            {% endif %}
-        </button>
     </div>
 </div>
 
+{% if not selectedentry.otp == None %}
+<div class="modal fade" id="deleteotp" tabindex="-1" aria-labelledby="deleteotp" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 text-danger">
+                    {% if language == "English" %}
+                        Delete OTP
+                    {% else %}
+                        Eliminar OTP
+                    {% endif %}
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modal-bodyotp">
+                {% if language == "English" %}
+                    Are you sure you want to delete the OTP key? If you still have 2 factor authentication you won't be able to log in with this OTP code.
+                {% else %}
+                    ¿Estás seguro que deseas eliminar la llave OTP? Si aún tienes la autenticación en dos pasos, no podrás iniciar sesión con este código OTP.
+                {% endif %}
+                <div class="d-flex justify-content-center" id="result">
+                    
+                </div>
+            </div>    
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closemodaldeleteotp">
+                    {% if language == "English" %}
+                        Close
+                    {% else %}
+                        Cerrar
+                    {% endif %}
+                </button>
+                <a href="" class="btn btn-secondary" id="closemodaldeleteotprestart" hidden>
+                    {% if language == "English" %}
+                        Close
+                    {% else %}
+                        Cerrar
+                    {% endif %}
+                </a>
+                <button type="button" class="btn btn-danger" onclick="deleteotpfun()" id="deleteotpbutton">
+                    {% if language == "English" %}
+                        Delete
+                    {% else %}
+                        Eliminar
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+
+<div class="modal fade" id="addotp" tabindex="-2" aria-labelledby="addotp" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 text-primary">
+                    {% if language == "English" %}
+                        Add OTP
+                    {% else %}
+                        Agregar OTP
+                    {% endif %}
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body" id="modal-bodyotp">
+                    {% if language == "English" %}
+                        Add an OTP key for 2 factor authentication.
+                    {% else %}
+                        Agregar una clave OTP para autenticación en dos pasos.
+                    {% endif %}
+                    <br>
+                    <label for="otpselect">
+                        {% if language == "English" %}
+                            OTP type
+                        {% else %}
+                            Tipo de OTP
+                        {% endif %}
+                    </label>
+                    <select class="form-select" name="otpselect" id="otpselect">
+                        <option selected value="totp">
+                            TOTP
+                        </option>
+                        <option value="hotp">
+                            HTOP
+                        </option>
+                    </select>
+
+                    <br>
+                    <label for="secret">
+                        {% if language == "English" %}
+                            OTP Secret Key
+                        {% else %}
+                            Llave secreta OTP
+                        {% endif %}
+                    </label>
+                    {% if language == "English" %}
+                        <input class="form-control" type="text" id="secret" name="secret" placeholder="Secret">
+                    {% else %}
+                        <input class="form-control" type="text" id="secret" name="secret" placeholder="Secreto">
+                    {% endif %}
+                    {% if error_dic.secrettotp %}
+                        <p class="text-danger">{{error_dic.secrettotp}}</p>
+                    {% else %}
+                        <br>
+                    {% endif %}
+                    <label for="fromfile">
+                        {% if language == "English" %}
+                            From File
+                        {% else %}
+                            De Archivo
+                        {% endif %}
+                    </label>
+                    
+                    <input type="file" class="form-control" name="inputotpqr" id="inputotpqr">
+                    {% if error_dic.filetotp %}
+                    <p class="text-danger">{{error_dic.filetotp}}</p>
+                    {% endif %}
+                    <small class="text-secondary">
+                        {% if language == "English" %}
+                            You can submit a plain text file with the key or a QR code image file.
+                        {% else %}
+                            Puedes escoger un archivo de texto plano con la llave o una imagen QR.
+                        {% endif %}
+                    </small>
+                </div>    
+
+                <input type="hidden" name="state2" id="state2" value="{{state}}">
+                <input type="hidden" name="entry2" id="entry2" value="{{selectedentry.id}}">
+                <input type="hidden" name="search2" id="search2" value="{{search}}">
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        {% if language == "English" %}
+                            Close
+                        {% else %}
+                            Cerrar
+                        {% endif %}
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        {% if language == "English" %}
+                            Add
+                        {% else %}
+                            Agregar
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 {% if language == "English" %}
 
@@ -496,4 +723,223 @@ function showhidepassword(span){
 }
 
 </script>
+
+
+{% if language == "English" %}
+<script>
+function copytootltipf(idtext, idtooltip) {
+  var copyText = document.getElementById(idtext);
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+  
+  var tooltip = document.getElementById(idtooltip);
+  tooltip.innerHTML = "Copied!!";
+}
+
+function outFunc(idtooltip) {
+  var tooltip = document.getElementById(idtooltip);
+  tooltip.innerHTML = "Copy";
+}
+
+</script>
+{% else %}
+<script>
+function copytootltipf(idtext, idtooltip) {
+  var copyText = document.getElementById(idtext);
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+  
+  var tooltip = document.getElementById(idtooltip);
+  tooltip.innerHTML = "Copiado!!";
+}
+
+function outFunc(idtooltip) {
+  var tooltip = document.getElementById(idtooltip);
+  tooltip.innerHTML = "Copiar";
+}
+
+</script>
+{% endif %}
+
+{% if not selectedentry.otp == None %}
+
+{% if selectedentry.otptype == "TOTP" %}
+<script>
+var otpsecret = document.getElementById('otpsecret');
+
+var secretkey = otpsecret.innerHTML;
+var hiddeninputotp = document.getElementById('otp{{selectedentry.id}}');
+var otpprogress = document.getElementById('otpprogress');
+
+let fetchedvalueotp = "";
+let fetchedvalueotptime = "";
+
+function fetchotp(){
+  const url = "/otpsecretget?secret="+secretkey+"&type={{selectedentry.otptype}}";
+  const urltime = "/otpsecrettime?secret="+secretkey+"&type={{selectedentry.otptype}}";
+
+    fetch(url)
+    .then((response) => response.text())
+    .then((text) => {
+        fetchedvalueotp = text;
+      })
+    
+    fetch(urltime)
+    .then((response) => response.text())
+    .then((text) => {
+        fetchedvalueotptime = text;
+      })
+}
+
+function otptimer(){
+  otpsecret.innerHTML = fetchedvalueotp;
+  hiddeninputotp.value = fetchedvalueotp;
+  fetchotp();
+  setTimeout(function(){
+    otpsecret.innerHTML = fetchedvalueotp;
+    hiddeninputotp.value = fetchedvalueotp;
+
+    otpprogress.style.width = (30-Number(fetchedvalueotptime))*100/30+"%";
+  }, 100);
+}
+
+otptimer();
+
+fetchotp();
+var cont = 30-Number(fetchedvalueotptime);
+
+setTimeout(function(){
+  cont = 30-Number(fetchedvalueotptime);
+},100);
+
+const interval = setInterval(function() {
+  if (cont >= 30){
+    otptimer();
+    setTimeout(function(){
+      cont = 30-Number(fetchedvalueotptime);
+    },100);
+  }
+  else{
+    otpprogress.style.width = (cont)*100/30+"%";
+    cont += 0.5;
+  }
+  
+}, 500);
+</script>
+
+{% else %}
+<script>
+
+var otpsecret = document.getElementById('otpsecret');
+var secretkey = otpsecret.innerHTML;
+var hiddeninputotp = document.getElementById('otp{{selectedentry.id}}');
+
+let fetchedvalueotp = "";
+
+function fetchotph(){
+  const url = "/otpsecretget?secret="+secretkey+"&type={{selectedentry.otptype}}&at=0";
+  
+  fetch(url)
+  .then((response) => response.text())
+  .then((text) => {
+    fetchedvalueotp = text;
+    otpsecret.innerHTML = fetchedvalueotp;
+    hiddeninputotp.value = fetchedvalueotp;
+  })  
+}
+
+fetchotph();
+
+hotpat = document.getElementById("hotpat");
+hotpat.addEventListener("change", function() {
+  var hotpatvalue = hotpat.value;
+  const url = "/otpsecretget?secret="+secretkey+"&type={{selectedentry.otptype}}&at="+hotpatvalue;
+  fetch(url)
+  .then((response) => response.text())
+  .then((text) => {
+    fetchedvalueotp = text;
+    otpsecret.innerHTML = fetchedvalueotp;
+    hiddeninputotp.value = fetchedvalueotp;
+  })
+
+});
+
+</script>
+
+{% endif %}
+{% endif %}
+
+<script>
+function restartdoc(){
+    console.log("as");
+    setTimeout(function(){
+        window.location.reload();
+    },100);
+}
+</script>
+
+{% if language == "English" %}
+
+<script>
+    function deleteotpfun(){
+        const url = "/otpdelete?id="+{{selectedentry.id}};
+        fetch(url)
+        .then((response) => response.text())
+        .then((text) => {
+            var modalbody = document.getElementById("result");
+
+            if (text == "None"){
+                modalbody.innerHTML = "<span style='color:red'>Error</span>";
+            }
+            else{
+                console.log(text);
+                modalbody.innerHTML = "<span style='color:green'>OTP Code Deleted</span>";
+                var deleteotpbutton = document.getElementById('deleteotpbutton');
+                deleteotpbutton.disabled = true;
+                var closemodaldeleteotp = document.getElementById("closemodaldeleteotp");
+                closemodaldeleteotp.hidden = true;
+                var closemodaldeleteotprestart = document.getElementById("closemodaldeleteotprestart");
+                closemodaldeleteotprestart.hidden = false;
+                //window.location.reload();
+        }
+      })
+}
+</script>
+
+{% else %}
+
+<script>
+    function deleteotpfun(){
+    const url = "/otpdelete?id="+{{selectedentry.id}};
+    fetch(url)
+    .then((response) => response.text())
+    .then((text) => {
+        var modalbody = document.getElementById("result");
+
+        if (text == "None"){
+            modalbody.innerHTML = "<span style='color:red'>Error</span>";
+        }
+        else{
+            modalbody.innerHTML = "<span style='color:green'>Códigp OTP eliminado</span>";
+            var deleteotpbutton = document.getElementById('deleteotpbutton');
+            deleteotpbutton.disabled = true;
+            //window.location.reload();
+        }
+      })
+}
+</script>
+{% endif %}
+
+{% if error_modal %}
+<script src="{% static 'js/jquery.min.js'%}"></script>
+
+<script>
+$(document).ready(function() {    
+    $("#addotp").modal('show');
+});
+</script>
+{% endif %}
+
 {% endblock content %}

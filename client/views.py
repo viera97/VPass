@@ -13,7 +13,7 @@ import datetime
 
 from . import passwd
 from .models import Questions, Entries, Incorrectban
-from . import encryptions, otpget
+from . import encryptions, otpget, qrcodeloader
 
 #Number of users
 global user_number
@@ -115,11 +115,42 @@ def checkempty(textinput):
 def otpsecretget(request):
     if request.method == 'GET':
         if request.GET.get('secret'):
+            otptype = request.GET.get('type')
             secret = request.GET.get('secret').split(' ')[-1]
-            return HttpResponse(otpget.get(secret)[0:3]+" "+otpget.get(secret)[3:7])
+            if otptype == "TOTP":
+                return HttpResponse(otpget.get(secret,otptype)[0:3]+" "+otpget.get(secret,otptype)[3:7])
+            else:
+                at = request.GET.get('at')
+                return HttpResponse(otpget.geth(secret,int(at)))
         else:
             return HttpResponse('None')
 
+def otpsecrettime(request):
+    if request.method == 'GET':
+        if request.GET.get('secret'):
+            secret = request.GET.get('secret').split(' ')[-1]
+            otptype = request.GET.get('type')
+            if otptype == "TOTP":
+                return HttpResponse(otpget.gettime(secret, otptype))
+        else:
+            return HttpResponse('None')
+
+def otpdelete(request):
+    if request.method == 'GET':
+        if request.GET.get('id'):
+            id = request.GET.get('id')
+            try:
+                id = int(id)
+            except:
+                return HttpResponse('None')
+            
+            if len(Entries.objects.filter(id=id)) == 0:
+                return HttpResponse('None')
+            else:
+                entry = Entries.objects.filter(id=id).first()
+                entry.otp = None
+                entry.save()
+                return HttpResponse('Deleted')
 #HTML VIEWS
 #-----------------------------------
 #Views for handling logins
@@ -697,6 +728,38 @@ def mobilehomeentry(request):
     response.set_cookie(key='language', value=language)
     return response
 
+def addotp(request):
+    theme, language, is_mobile = init(request)
+
+    idbool = False
+    selectedentry = ''
+
+    if not request.user.is_authenticated:
+        return redirect("singin")
+    
+    if request.method == "GET":
+        if request.GET.get('id'):
+            selectedentry = request.GET.get('id')
+            if len(Entries.objects.filter(id=selectedentry)) != 0:
+                idbool = True
+                selectedentry = Entries.objects.filter(id=selectedentry).first()
+            else:
+                idbool = False
+
+    context = {
+            'title':'Add otp',
+            'theme':theme,
+            'language':language,
+            'is_mobile':is_mobile,
+            'idbool':idbool,
+            'selectedentry':selectedentry,
+        }
+    
+    response = render(request, 'Pages/add_otp.html', context)
+    response.set_cookie(key='theme', value=theme)
+    response.set_cookie(key='language', value=language)
+    return response
+    
 def add_entry(request):
     theme, language, is_mobile = init(request)
 
@@ -769,6 +832,7 @@ def editentry(request):
     state = False
     search = ''
     error_dic = {}
+    error_modal = False
 
     if request.method == 'GET':
         if request.GET.get('entry'):
@@ -800,9 +864,31 @@ def editentry(request):
                 state = True
             else:
                 state = False
+        
+        if 'state2' in request.POST:
+            if request.POST['state2'] == "True":
+                state = True
+            else:
+                state = False
 
         if 'entry' in request.POST:
             entry = request.POST['entry']
+
+            try:
+                entry = int(entry)
+                if len(Entries.objects.filter(id=entry)) != 0:
+                    entryidbool = True
+                else:
+                    entryidbool = False
+
+            except:
+                entryidbool = False
+            
+            if entryidbool:
+                selectedentry = Entries.objects.filter(id=entry).first()
+        
+        if 'entry2' in request.POST:
+            entry = request.POST['entry2']
 
             try:
                 entry = int(entry)
@@ -820,105 +906,206 @@ def editentry(request):
         if 'search' in request.POST:
             search = request.POST['search']
         
-        if not 'name' in request.POST:
-            if language == "English":
-                error_dic['name'] = "The name can't be empty"
-            else:
-                error_dic['name'] = "El nombre no puede ser vacío"
-        else:
-            name = request.POST['name']
-            if name == "":
+        if 'search2' in request.POST:
+            search = request.POST['search2']
+        
+        if 'form1' in request.POST:
+            if not 'name' in request.POST:
                 if language == "English":
                     error_dic['name'] = "The name can't be empty"
                 else:
                     error_dic['name'] = "El nombre no puede ser vacío"
             else:
-                cont = -1
-                for i in name.split(" "):
-                    if i == "":
-                        cont += 1
-
-                if len(name) == cont:
+                name = request.POST['name']
+                if name == "":
                     if language == "English":
                         error_dic['name'] = "The name can't be empty"
                     else:
                         error_dic['name'] = "El nombre no puede ser vacío"
+                else:
+                    cont = -1
+                    for i in name.split(" "):
+                        if i == "":
+                            cont += 1
 
-        username = request.POST['username']
-        if username == "":
-            if language == "English":
-                error_dic['username'] = "The username can't be empty"
-            else:
-                error_dic['username'] = "El nombre de usuario no puede ser vacío"
-        else:
-            cont = -1
-            for i in username.split(" "):
-                if i == "":
-                    cont += 1
+                    if len(name) == cont:
+                        if language == "English":
+                            error_dic['name'] = "The name can't be empty"
+                        else:
+                            error_dic['name'] = "El nombre no puede ser vacío"
 
-            if len(username) == cont:
+            username = request.POST['username']
+            if username == "":
                 if language == "English":
                     error_dic['username'] = "The username can't be empty"
                 else:
                     error_dic['username'] = "El nombre de usuario no puede ser vacío"
-        
-        password = request.POST['password']
-        if password == "":
-            if language == "English":
-                error_dic['password'] = "The password can't be empty"
             else:
-                error_dic['password'] = "La contraseña no puede ser vacía"
-        else:
-            cont = -1
-            for i in password.split(" "):
-                if i == "":
-                    cont += 1
+                cont = -1
+                for i in username.split(" "):
+                    if i == "":
+                        cont += 1
+
+                if len(username) == cont:
+                    if language == "English":
+                        error_dic['username'] = "The username can't be empty"
+                    else:
+                        error_dic['username'] = "El nombre de usuario no puede ser vacío"
             
-            if len(password) == cont:
+            password = request.POST['password']
+            if password == "":
                 if language == "English":
                     error_dic['password'] = "The password can't be empty"
                 else:
                     error_dic['password'] = "La contraseña no puede ser vacía"
-        
-        url = request.POST['url']
-
-        selectedentry_aux = {}
-        selectedentry_aux['id']=selectedentry.id
-
-        selectedentry_aux['url'] = url
-        
-        if not "name" in error_dic:
-            selectedentry_aux['name'] = name
-        else:
-            selectedentry_aux['name'] = selectedentry.name
-
-        if not 'username' in error_dic:
-            selectedentry_aux['username'] = username
-        else:
-            selectedentry_aux['username'] = selectedentry.username
-        
-        if not 'password' in error_dic:
-            selectedentry_aux['password'] = password
-        else:
-            selectedentry_aux['password'] = selectedentry.password
-
-        selectedentry = selectedentry_aux
-
-        if len(error_dic) == 0:
-            entry = Entries.objects.filter(id=selectedentry_aux['id']).first()
-
-            entry.name = selectedentry_aux['name']
-            entry.username = selectedentry_aux['username']
-            entry.password = selectedentry_aux['password']
-            entry.url = selectedentry_aux['url']
-
-            entry.save()
-
-            if state:
-                return redirect(f"/mobilehomeentry?entryid={selectedentry_aux['id']}&search={search}")
             else:
-                return redirect(f"/?entryid={selectedentry_aux['id']}&search={search}")
+                cont = -1
+                for i in password.split(" "):
+                    if i == "":
+                        cont += 1
+                
+                if len(password) == cont:
+                    if language == "English":
+                        error_dic['password'] = "The password can't be empty"
+                    else:
+                        error_dic['password'] = "La contraseña no puede ser vacía"
             
+            url = request.POST['url']
+
+            selectedentry_aux = {}
+            selectedentry_aux['id']=selectedentry.id
+
+            selectedentry_aux['url'] = url
+            
+            if not "name" in error_dic:
+                selectedentry_aux['name'] = name
+            else:
+                selectedentry_aux['name'] = selectedentry.name
+
+            if not 'username' in error_dic:
+                selectedentry_aux['username'] = username
+            else:
+                selectedentry_aux['username'] = selectedentry.username
+            
+            if not 'password' in error_dic:
+                selectedentry_aux['password'] = password
+            else:
+                selectedentry_aux['password'] = selectedentry.password
+
+            selectedentry = selectedentry_aux
+
+            if len(error_dic) == 0:
+                entry = Entries.objects.filter(id=selectedentry_aux['id']).first()
+
+                entry.name = selectedentry_aux['name']
+                entry.username = selectedentry_aux['username']
+                entry.password = selectedentry_aux['password']
+                entry.url = selectedentry_aux['url']
+
+                entry.save()
+
+                if state:
+                    return redirect(f"/mobilehomeentry?entryid={selectedentry_aux['id']}&search={search}")
+                else:
+                    return redirect(f"/?entryid={selectedentry_aux['id']}&search={search}")
+        else:
+            if 'otpselect' in request.POST:
+                otpselect = request.POST['otpselect']
+
+                if 'inputotpqr' in request.FILES:
+                    qrcodeloader.save_key_from_file(request.FILES["inputotpqr"])
+                    qrcodetext = qrcodeloader.load_otp_file()
+                    if otpselect == "totp":
+                        try:
+                            otpget.get(qrcodetext, "TOTP")
+                        except:
+                            error_modal = True
+                            if language == "English":
+                                error_dic['filetotp'] = "Invalid File"
+                            else:
+                                error_dic['filetotp'] = "Archivo Incorrecto"
+                        
+                        if not 'filetotp' in error_dic:
+                            if 'secret' in request.POST:
+                                if not request.POST['secret'] == "":
+                                    error_modal = True
+                                    if language == "English":
+                                        error_dic['filetotp'] = "You have to select a file or write a secret, not both"
+                                    else:
+                                        error_dic['filetotp'] = "Debes seleccionar un archivo o escribir una llave secreta per no ambas"
+                                else:
+                                    selectedentry.otp = qrcodetext
+                                    selectedentry.otptype = "TOTP"
+                                    selectedentry.save()
+                    else:
+                        try:
+                            otpget.geth(qrcodetext, 0)
+                        except:
+                            error_modal = True
+                            if language == "English":
+                                error_dic['filetotp'] = "Invalid File"
+                            else:
+                                error_dic['filetotp'] = "Archivo Incorrecto"
+
+                        if not 'filetotp' in error_dic:
+                            if 'secret' in request.POST:
+                                if not request.POST['secret'] == "":
+                                    error_modal = True
+                                    if language == "English":
+                                        error_dic['filetotp'] = "You have to select a file or write a secret, not both"
+                                    else:
+                                        error_dic['filetotp'] = "Debes seleccionar un archivo o escribir una llave secreta per no ambas"
+                                else:
+                                    selectedentry.otp = qrcodetext
+                                    selectedentry.otptype = "HOTP"
+                                    selectedentry.save()
+                     
+                else:
+                    if 'secret' in request.POST:
+                        secret = request.POST['secret']
+                        print(otpselect)
+                        if otpselect == "totp":
+                            try:
+                                otpget.get(secret, "TOTP")
+                            except:
+                                error_modal = True
+                                if language == "English":
+                                    error_dic['secrettotp'] = "Invalid Secret"
+                                else:
+                                    error_dic['secrettotp'] = "Llave secreta incorrecta"
+
+                            if not 'secrettotp' in error_dic:
+                                if secret == "":
+                                    error_modal = True
+                                    if language == "English":
+                                        error_dic['secrettotp'] = "Invalid Secret"
+                                    else:
+                                        error_dic['secrettotp'] = "Llave secreta incorrecta"
+                                else:
+                                    selectedentry.otp = secret
+                                    selectedentry.otptype = "TOTP"
+                                    selectedentry.save()
+                        else:
+                            try:
+                                otpget.geth(secret, 0)
+                            except:
+                                error_modal = True
+                                if language == "English":
+                                    error_dic['secrettotp'] = "Invalid Secret"
+                                else:
+                                    error_dic['secrettotp'] = "Llave secreta incorrecta"
+
+                            if not 'secrettotp' in error_dic:
+                                if secret == "":
+                                    error_modal = True
+                                    if language == "English":
+                                        error_dic['secrettotp'] = "Invalid Secret"
+                                    else:
+                                        error_dic['secrettotp'] = "Llave secreta incorrecta"
+                                else:
+                                    selectedentry.otp = secret
+                                    selectedentry.otptype = "HOTP"
+                                    selectedentry.save()
     context = {
             'title':'Edit',
             'theme':theme,
@@ -929,6 +1116,7 @@ def editentry(request):
             'state':state,
             'search':search,
             'error_dic':error_dic,
+            'error_modal':error_modal
         }
     
     response = render(request, 'Pages/editentry.html', context)
@@ -998,7 +1186,7 @@ def encryptdata(request):
             os.remove("secure_key_aux")
         
         else:
-            if "inputfile" in request.FILES:
+            if "iload_keynputfile" in request.FILES:
                 encryptions.save_key_from_file(request.FILES["inputfile"])
                 key = encryptions.load_key("secure_key_aux")
                 try:
@@ -1147,6 +1335,8 @@ def securityquestions(request):
     response.set_cookie(key='language', value=language)
     return response
 
+
+#Cosas de prueba
 def hom2(request):
     theme = init(request)
 

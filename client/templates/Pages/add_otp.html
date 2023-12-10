@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block content %}
+
+<br>
+<br>
+
+<div class="container">
+    <div class="row justify-content-center" >
+        <div class="col-md-7 shadow px-5 py-4">
+            <div class="display-4 mb-4 text-center">
+                {% if language == "English" %}
+                    Add OTP:
+                {% else %}
+                    Agregar OTP:
+                {% endif %}
+            </div>
+            <small class="text-secondary">
+                <strong>Name:</strong> {{selectedentry.name}} -- <strong>Id:</strong> {{selectedentry.id}}
+            </small>
+            <br>
+            <br>
+            <form action="" method="post">
+                {% csrf_token %}
+
+                <label for="otpselect">
+                    {% if language == "English" %}
+                        OTP type
+                    {% else %}
+                        Tipo de OTP
+                    {% endif %}
+                </label>
+                <select class="form-select" name="otpselect" id="otpselect">
+                    <option selected value="totp">
+                        TOTP
+                    </option>
+                    <option value="hotp">
+                        HTOP
+                    </option>
+                </select>
+                <label for="secret">
+                    {% if language == "English" %}
+                        OTP Secret
+                    {% else %}
+                        Secreto OTP
+                    {% endif %}
+                </label>
+                {% if language == "English" %}
+                    <input class="form-control" type="text" id="secret" name="secret" placeholder="Secret">
+                {% else %}
+                    <input class="form-control" type="text" id="secret" name="secret" placeholder="Secreto">
+                {% endif %}
+                <div class="row">
+                    <div class="col-2">
+                        {% if language == "English" %}
+                            From File
+                        {% else %}
+                            De Archivo
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

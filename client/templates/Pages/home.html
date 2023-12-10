@@ -189,35 +189,80 @@
             </div>
           </div>
           <div>
-            <small class="text-secondary">
-                OTP
-            </small>
+              <small class="text-secondary" style="float:right;">
+                  OTP
+              </small>
             <br>
             <div class="pt-2">
+              {% if selectedentry.otptype == "TOTP" %}
               <div class="mytooltip">
-              <span class="otp{{selectedentry.id}}">
+              <span class="btn otp{{selectedentry.id}}">
                 {% if selectedentry.otp == None %}
-                  <a href="">Agregar otp</a>
+                  <a href="addotp?theme={{theme}}&id={{selectedentry.id}}">Agregar otp</a>
                 {% else %}
-                  <span id="otpsecret">
+                  <span id="otpsecret" onclick="copytootltipf('otp{{selectedentry.id}}','myTooltotp{{selectedentry.id}}')" onmouseout="outFunc('myTooltotp{{selectedentry.id}}')">
                     {{selectedentry.otp}}
                   </span>
-                {% endif %}
-              </span>
-              {% if not selectedentry.otp == None %}
-              <button class="btn buttons" onclick="copytootltipf('otp{{selectedentry.id}}','myTooltotp{{selectedentry.id}}')" onmouseout="outFunc('myTooltotp{{selectedentry.id}}')">
-                <span class="tooltiptext" id="myTooltotp{{selectedentry.id}}">
+                  <span class="tooltiptext" id="myTooltotp{{selectedentry.id}}">
                   {% if language == "English" %}
                     Copy
                   {% else %}
                     Copiar
                   {% endif %}
                 </span>
-                <span id="addon-wrapping">{% custom_icon 'clipboard' size='1.2em' %}</span>
-              </button>
-              <input hidden type="text" name="otp{{selectedentry.id}}" id="otp{{selectedentry.id}}" value="{{selectedentry.otp}}">
-              {% endif %}
+                <input hidden type="text" name="otp{{selectedentry.id}}" id="otp{{selectedentry.id}}" value="{{selectedentry.otp}}">
+                
+                {% if selectedentry.otptype == "TOTP" %}
+                  <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" id="otpprogress" style="width: 0%"></div>
+                  </div>
+                {% endif %}
+                {% endif %}
+              </span>
               </div>
+              {% else %}
+
+              <div class="row justify-content-end">
+              <div class="col-4">
+              <div class="mytooltip">
+              <span class="btn otp{{selectedentry.id}}">
+                {% if selectedentry.otp == None %}
+                {% if language == "English" %}
+                  <a href="addotp?theme={{theme}}&id={{selectedentry.id}}">Add</a>
+                  {% else %}
+                  <a href="addotp?theme={{theme}}&id={{selectedentry.id}}">Agregar</a>
+                {% endif %}
+                {% else %}
+                  <span id="otpsecret" onclick="copytootltipf('otp{{selectedentry.id}}','myTooltotp{{selectedentry.id}}')" onmouseout="outFunc('myTooltotp{{selectedentry.id}}')">
+                    {{selectedentry.otp}}
+                  </span>
+                  <span class="tooltiptext" id="myTooltotp{{selectedentry.id}}">
+                  {% if language == "English" %}
+                    Copy
+                  {% else %}
+                    Copiar
+                  {% endif %}
+                </span>
+                <input hidden type="text" name="otp{{selectedentry.id}}" id="otp{{selectedentry.id}}" value="{{selectedentry.otp}}">
+                
+                {% if selectedentry.otptype == "TOTP" %}
+                  <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" id="otpprogress" style="width: 0%"></div>
+                  </div>
+                {% endif %}
+                {% endif %}
+              </span>
+              </div>
+              </div>
+
+              <div class="col-3">
+                {% if not selectedentry.otp == None %}
+                <input class="form-control" type="number" name="hotpat" id="hotpat" value="0" min="0">
+                {% endif %}
+              </div>
+              </div>
+
+              {% endif %}
             </div>
 
           </div>
@@ -600,31 +645,110 @@ var rightColumnHeight = rightColumn.offsetHeight;
 var listGroup = document.getElementsByClassName("list-group")[0];
 // Set the max-height of the list-group to match the right column height
 listGroup.style.maxHeight = rightColumnHeight + "px";
+</script>
 
-
+{% if not selectedentry.otp == None %}
+{% if selectedentry.otptype == "TOTP" %}
+<script>
 var otpsecret = document.getElementById('otpsecret');
 var secretkey = otpsecret.innerHTML;
+var hiddeninputotp = document.getElementById('otp{{selectedentry.id}}');
+var otpprogress = document.getElementById('otpprogress');
 
-function otptimer(){
-  const url = "/otpsecretget?secret="+secretkey;
+let fetchedvalueotp = "";
+let fetchedvalueotptime = "";
+
+function fetchotp(){
+  const url = "/otpsecretget?secret="+secretkey+"&type={{selectedentry.otptype}}";
+  const urltime = "/otpsecrettime?secret="+secretkey+"&type={{selectedentry.otptype}}";
+
     fetch(url)
     .then((response) => response.text())
-    .then((text) => {  
-      otpsecret.innerHTML = text;
+    .then((text) => {
+        fetchedvalueotp = text;
       })
+    
+    fetch(urltime)
+    .then((response) => response.text())
+    .then((text) => {
+        fetchedvalueotptime = text;
+      })
+}
+
+function otptimer(){
+  otpsecret.innerHTML = fetchedvalueotp;
+  hiddeninputotp.value = fetchedvalueotp;
+  fetchotp();
+  setTimeout(function(){
+    otpsecret.innerHTML = fetchedvalueotp;
+    hiddeninputotp.value = fetchedvalueotp;
+
+    otpprogress.style.width = (30-Number(fetchedvalueotptime))*100/30+"%";
+  }, 100);
 }
 
 otptimer();
 
+fetchotp();
+var cont = 30-Number(fetchedvalueotptime);
+
+setTimeout(function(){
+  cont = 30-Number(fetchedvalueotptime);
+},100);
+
 const interval = setInterval(function() {
-  const url = "/otpsecretget?secret="+secretkey;
+  if (cont >= 30){
+    otptimer();
+    setTimeout(function(){
+      cont = 30-Number(fetchedvalueotptime);
+    },100);
+  }
+  else{
+    otpprogress.style.width = (cont)*100/30+"%";
+    cont += 0.5;
+  }
+  
+}, 500);
+</script>
+{% else %}
+<script>
+
+var otpsecret = document.getElementById('otpsecret');
+var secretkey = otpsecret.innerHTML;
+var hiddeninputotp = document.getElementById('otp{{selectedentry.id}}');
+
+let fetchedvalueotp = "";
+
+function fetchotph(){
+  const url = "/otpsecretget?secret="+secretkey+"&type={{selectedentry.otptype}}&at=0";
+  
   fetch(url)
   .then((response) => response.text())
   .then((text) => {
-    otpsecret.innerHTML = text;
+    fetchedvalueotp = text;
+    otpsecret.innerHTML = fetchedvalueotp;
+    hiddeninputotp.value = fetchedvalueotp;
+  })  
+}
+
+fetchotph();
+
+hotpat = document.getElementById("hotpat");
+hotpat.addEventListener("change", function() {
+  var hotpatvalue = hotpat.value;
+  const url = "/otpsecretget?secret="+secretkey+"&type={{selectedentry.otptype}}&at="+hotpatvalue;
+  fetch(url)
+  .then((response) => response.text())
+  .then((text) => {
+    fetchedvalueotp = text;
+    otpsecret.innerHTML = fetchedvalueotp;
+    hiddeninputotp.value = fetchedvalueotp;
   })
- }, 10000);
+
+});
 
 </script>
+{% endif %}
+{% endif %}
 
 {% endblock content %}

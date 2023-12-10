@@ -82,24 +82,25 @@
               <div class="mytooltip">
               <span class="otp{{selectedentry.id}}">
                 {% if selectedentry.otp == None %}
-                  <a href="">Agregar otp</a>
+                  <a href="addotp?theme={{theme}}&id={{selectedentry.id}}">Agregar otp</a>
                 {% else %}
-                  {{selectedentry.otp}}
-                {% endif %}
-              </span>
-              {% if not selectedentry.otp == None %}
-                <button class="btn buttons" onclick="copytootltipf('otp{{selectedentry.id}}','myTooltotp{{selectedentry.id}}')" onmouseout="outFunc('myTooltotp{{selectedentry.id}}')">
-                <span class="tooltiptext" id="myTooltotp{{selectedentry.id}}">
+                  <span id="otpsecret" onclick="copytootltipf('otp{{selectedentry.id}}','myTooltotp{{selectedentry.id}}')" onmouseout="outFunc('myTooltotp{{selectedentry.id}}')">
+                    {{selectedentry.otp}}
+                  </span>
+                  <span class="tooltiptext" id="myTooltotp{{selectedentry.id}}">
                   {% if language == "English" %}
                     Copy
                   {% else %}
                     Copiar
                   {% endif %}
                 </span>
-                <span id="addon-wrapping">{% custom_icon 'clipboard' size='1.2em' %}</span>
-              </button>
-              <input hidden type="text" name="otp{{selectedentry.id}}" id="otp{{selectedentry.id}}" value="{{selectedentry.otp}}">
-              {% endif %}
+                <input hidden type="text" name="otp{{selectedentry.id}}" id="otp{{selectedentry.id}}" value="{{selectedentry.otp}}">
+
+                <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100">
+                  <div class="progress-bar progress-bar-striped progress-bar-animated" id="otpprogress" style="width: 0%"></div>
+                </div>
+                {% endif %}
+              </span>
               </div>
             </div>
 
@@ -449,5 +450,69 @@ function showpassword(){
   }
 }
 </script>
+
+{% if not selectedentry.otp == None %}
+<script>
+var otpsecret = document.getElementById('otpsecret');
+var secretkey = otpsecret.innerHTML;
+var hiddeninputotp = document.getElementById('otp{{selectedentry.id}}');
+var otpprogress = document.getElementById('otpprogress');
+
+let fetchedvalueotp = "";
+let fetchedvalueotptime = "";
+
+function fetchotp(){
+  const url = "/otpsecretget?secret="+secretkey;
+  const urltime = "/otpsecrettime?secret="+secretkey;
+
+    fetch(url)
+    .then((response) => response.text())
+    .then((text) => {
+        fetchedvalueotp = text;
+      })
+    
+    fetch(urltime)
+    .then((response) => response.text())
+    .then((text) => {
+        fetchedvalueotptime = text;
+      })
+}
+
+function otptimer(){
+  otpsecret.innerHTML = fetchedvalueotp;
+  hiddeninputotp.value = fetchedvalueotp;
+  fetchotp();
+  setTimeout(function(){
+    otpsecret.innerHTML = fetchedvalueotp;
+    hiddeninputotp.value = fetchedvalueotp;
+
+    otpprogress.style.width = (30-Number(fetchedvalueotptime))*100/30+"%";
+  }, 100);
+}
+
+otptimer();
+
+fetchotp();
+var cont = 30-Number(fetchedvalueotptime);
+
+setTimeout(function(){
+  cont = 30-Number(fetchedvalueotptime);
+},100);
+
+const interval = setInterval(function() {
+  if (cont >= 30){
+    otptimer();
+    setTimeout(function(){
+      cont = 30-Number(fetchedvalueotptime);
+    },100);
+  }
+  else{
+    otpprogress.style.width = (cont)*100/30+"%";
+    cont += 0.5;
+  }
+  
+}, 500);
+</script>
+{% endif %}
 
 {% endblock content %}

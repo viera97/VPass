@@ -21,6 +21,9 @@ urlpatterns = [
     path("check_password_status", views.check_password_status, name='check_password_status'),
     path("genpasword", views.genpasword, name='genpasword'),
     path("otpsecretget", views.otpsecretget, name='otpsecretget'),
+    path("otpsecrettime", views.otpsecrettime, name='otpsecrettime'),
+    path("addotp", views.addotp, name='addotp'),
+    path("otpdelete", views.otpdelete, name='otpdelete'),
     
     path("hom2", views.hom2, name='hom2'),
     path("test", views.test, name='test'),

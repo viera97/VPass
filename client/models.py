@@ -12,7 +12,12 @@ class Entries(models.Model):
     encrypted = models.BooleanField(null=False, blank=False, default=False)
     created = models.DateTimeField(null=False, blank=False, default=timezone.now, editable=False)
     updated = models.DateTimeField(null=True, blank=True)
-    otp = models.TextField(max_length=60, blank=True, null=True)
+    otp = models.TextField(max_length=200, blank=True, null=True)
+    otptype = models.CharField(max_length=4, 
+                    choices=[
+                            ('TOTP', 'TOTP'),
+                            ('HOTP', 'HOTP'),
+                            ], default='TOTP')
 class Questions(models.Model):
     secquestions0 = models.CharField(
         max_length=2,
